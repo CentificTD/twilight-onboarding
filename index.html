@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Twilight &middot; Moderator Onboarding</title>
+<style>
+:root{
+  --accent:#C2467D; --accent-dim:#9E3665; --accent-soft:rgba(194,70,125,0.15); --accent-ink:#C2467D;
+  --amber:#F59E0B; --amber-bg:#FFF8EC; --amber-text:#92400E; --amber-border:#f5d08a;
+  --green:#22c55e; --green-bg:#EAF3DE; --green-text:#27500A;
+  --red:#ef4444; --red-bg:#FEF2F2; --red-text:#991b1b;
+  --blue:#3b82f6; --blue-bg:#EFF6FF; --blue-text:#1e3a8a;
+  --font:-apple-system,'SF Pro Display','SF Pro Text',BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  --font-num:'Avenir Next','Avenir','SF Pro Display',-apple-system,sans-serif;
+}
+[data-theme="dark"]{
+  color-scheme:dark;
+  /* Night-sky palette: deep navy/indigo base rather than neutral charcoal,
+     so the app itself reads as "after dark" even before any content loads. */
+  --bg:#080B16; --bg2:#10142A; --bg3:#171C38; --bg4:#232A4D;
+  --text:#EAEEFC; --text2:#A6AFD4; --text3:#6B7299;
+  --border:#1C2140; --border-strong:#2C335C;
+  --input-bg:#171C38; --card-bg:#10142A; --nav-bg:rgba(8,11,22,0.88); --sidebar-bg:#10142A;
+  --shadow-sm:0 2px 12px rgba(0,0,0,0.45); --shadow-md:0 8px 40px rgba(0,0,0,0.55); --shadow-lg:0 20px 60px rgba(0,0,0,0.65);
+  --accent-ink:#E58AAC;
+  --bg-glow:#3A1E45;   /* dusk pink-purple, low on the horizon */
+  --bg-glow2:#152352;  /* cooler indigo-blue glow, opposite corner */
+  --star-op:1;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  /* "Twilight" in light mode reads as early dusk/dawn — soft lavender-blue
+     rather than a neutral warm cream, to stay on theme with dark mode. */
+  --bg:#F2F1FA; --bg2:#FDFCFF; --bg3:#E9E7F6; --bg4:#DBD8F0;
+  --text:#211F33; --text2:#5C5A78; --text3:#8D8AAC;
+  --border:rgba(70,60,140,0.13); --border-strong:rgba(60,50,130,0.22);
+  --input-bg:#E9E7F6; --card-bg:#FDFCFF; --nav-bg:rgba(242,241,250,0.88); --sidebar-bg:#FDFCFF;
+  --shadow-sm:0 2px 12px rgba(40,30,90,0.06); --shadow-md:0 8px 40px rgba(40,30,90,0.10); --shadow-lg:0 20px 60px rgba(40,30,90,0.12);
+  --accent-ink:#9E3665;
+  --bg-glow:#F2D9E9;   /* soft dusk-pink haze */
+  --bg-glow2:#DCE0F7;  /* pale sky blue */
+  --star-op:0;
+}
+*{box-sizing:border-box;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select,textarea{font-family:inherit;}input:focus{outline:none;}
+html,body{margin:0;padding:0;}
+/* Layered "night sky": a faint scattered star field (dark mode only, faded
+   out via --star-op in light mode) sits under two soft glows — a warm
+   dusk-pink haze low on one side, a cooler indigo glow on the other — over
+   the base color. All static, no animation (Master Context §3.3: an
+   animated version was tried once elsewhere and reverted for looking choppy). */
+body{
+  font-family:var(--font);color:var(--text);
+  background:
+    radial-gradient(1.4px 1.4px at 8% 15%, rgba(255,255,255,calc(0.85*var(--star-op))), transparent 60%) 0 0/240px 240px repeat,
+    radial-gradient(1px 1px at 62% 55%, rgba(255,255,255,calc(0.65*var(--star-op))), transparent 60%) 0 0/280px 280px repeat,
+    radial-gradient(1.1px 1.1px at 35% 82%, rgba(255,255,255,calc(0.75*var(--star-op))), transparent 60%) 0 0/320px 320px repeat,
+    radial-gradient(1px 1px at 88% 30%, rgba(255,255,255,calc(0.55*var(--star-op))), transparent 60%) 0 0/200px 200px repeat,
+    radial-gradient(1.3px 1.3px at 20% 68%, rgba(255,255,255,calc(0.6*var(--star-op))), transparent 60%) 0 0/260px 260px repeat,
+    radial-gradient(1px 1px at 50% 12%, rgba(255,255,255,calc(0.5*var(--star-op))), transparent 60%) 0 0/300px 300px repeat,
+    radial-gradient(circle at 14% 100%, var(--bg-glow) 0%, transparent 44%),
+    radial-gradient(circle at 92% -6%, var(--bg-glow2) 0%, transparent 48%),
+    var(--bg);
+  background-attachment:fixed;
+  transition:background .3s,color .3s;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink);}
+#login{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:
+    radial-gradient(1.4px 1.4px at 8% 15%, rgba(255,255,255,calc(0.85*var(--star-op))), transparent 60%) 0 0/240px 240px repeat,
+    radial-gradient(1px 1px at 62% 55%, rgba(255,255,255,calc(0.65*var(--star-op))), transparent 60%) 0 0/280px 280px repeat,
+    radial-gradient(1.1px 1.1px at 35% 82%, rgba(255,255,255,calc(0.75*var(--star-op))), transparent 60%) 0 0/320px 320px repeat,
+    radial-gradient(1px 1px at 88% 30%, rgba(255,255,255,calc(0.55*var(--star-op))), transparent 60%) 0 0/200px 200px repeat,
+    radial-gradient(circle at 14% 100%, var(--bg-glow) 0%, transparent 44%),
+    radial-gradient(circle at 92% -6%, var(--bg-glow2) 0%, transparent 48%),
+    var(--bg);
+}
+.entry-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:22px;box-shadow:var(--shadow-lg);padding:44px 40px 34px;width:100%;max-width:420px;text-align:center;}
+.brand-mark{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent-dim));display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:700;color:#fff;margin:0 auto 18px;}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:10px;}
+.entry-title{font-size:25px;font-weight:600;letter-spacing:-.02em;margin-bottom:8px;}
+.entry-sub{font-size:14.5px;color:var(--text2);line-height:1.55;margin-bottom:28px;}
+.field-label{display:block;text-align:left;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.field-input{width:100%;font-size:15.5px;padding:12px 14px;background:var(--input-bg);border:.5px solid var(--border-strong);border-radius:12px;color:var(--text);letter-spacing:-.005em;transition:border-color .18s,box-shadow .18s;}
+.field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+.field-input::placeholder{color:var(--text3);}
+.err-msg{color:var(--red);font-size:13px;margin-top:10px;min-height:18px;text-align:left;}
+.hint-line{font-size:12.5px;color:var(--text3);margin-top:18px;line-height:1.5;}
+.version-tag{font-size:10.5px;color:var(--text3);margin-top:22px;opacity:.7;}
+.btn{font-size:15px;font-weight:500;letter-spacing:-.01em;padding:11px 16px;border-radius:12px;border:.5px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .22s cubic-bezier(.4,0,.2,1);width:100%;}
+.btn-primary{background:var(--accent);color:#fff;font-weight:600;}
+.btn-primary:hover{background:var(--accent-dim);transform:translateY(-1px);box-shadow:0 6px 18px var(--accent-soft);}
+.btn-primary:active{transform:scale(.98);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-secondary{background:var(--bg2);color:var(--text);border:.5px solid var(--border-strong);width:auto;}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-ghost{background:transparent;color:var(--text2);border:.5px solid var(--border-strong);width:auto;font-size:13px;padding:8px 14px;}
+.btn-ghost:hover{background:var(--bg3);color:var(--text);}
+.page-wrap{max-width:1180px;margin:0 auto;padding:0 32px;width:100%;}
+.shell{min-height:calc(100vh - 90px);}
+.app-header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:22px 0 18px;flex-wrap:wrap;}
+.nav-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.nav-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-dim));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+.nav-brand{font-size:15.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nav-brand span{color:var(--text3);font-weight:400;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.who{display:flex;align-items:center;}
+.who-text{font-size:13px;line-height:1.4;text-align:right;}
+.role-line{color:var(--accent-ink);font-size:11.5px;}
+.icon-btn{width:32px;height:32px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;}
+.icon-btn:hover{background:var(--bg4);color:var(--text);}
+.btn-signout{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:8px;border:.5px solid var(--border-strong);color:var(--text2);font-size:12.5px;font-weight:600;}
+.btn-signout:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft);}
+.nav-tabs{display:flex;gap:6px;background:var(--bg2);border:.5px solid var(--border);border-radius:13px;padding:5px;overflow-x:auto;scrollbar-width:none;box-shadow:var(--shadow-sm);margin-bottom:22px;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--text2);transition:all .2s;flex:1;min-width:fit-content;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:#fff;font-weight:600;box-shadow:0 4px 14px var(--accent-soft);}
+.content{padding:0 0 60px;min-width:0;overflow-x:hidden;width:100%;}
+h1.page-h1{font-size:24px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;}
+.page-sub{font-size:14.5px;color:var(--text2);margin:0 0 24px;line-height:1.5;}
+.card{background:var(--card-bg);border:.5px solid var(--border);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow-sm);}
+.hero-box{background:var(--card-bg);border:.5px solid var(--border);border-radius:20px;padding:26px 28px;margin-bottom:26px;box-shadow:var(--shadow-sm);}
+.hero-box.certified{border-color:rgba(34,197,94,.35);}
+.hero-title2{font-size:19px;font-weight:600;letter-spacing:-.015em;margin-bottom:6px;}
+.hero-sub2{font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:16px;}
+.progress-track{height:8px;border-radius:99px;background:var(--bg4);overflow:hidden;margin-bottom:8px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent));border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1);}
+.progress-label{font-size:12.5px;color:var(--text3);}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:99px;font-size:11.5px;font-weight:600;letter-spacing:.02em;}
+.pill-green{background:var(--green-bg);color:var(--green-text);border:.5px solid rgba(34,197,94,.3);}
+.pill-amber{background:var(--amber-bg);color:var(--amber-text);border:.5px solid var(--amber-border);}
+.pill-blue{background:var(--blue-bg);color:var(--blue-text);border:.5px solid rgba(59,130,246,.3);}
+.pill-gray{background:var(--bg3);color:var(--text3);border:.5px solid var(--border-strong);}
+.stepper{margin-top:6px;}
+.step-row{display:flex;gap:14px;position:relative;padding-bottom:22px;}
+.step-row:last-child{padding-bottom:0;}
+.step-row:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--border);}
+.step-dot{width:31px;height:31px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;flex-shrink:0;background:var(--bg3);color:var(--text3);border:2px solid var(--border-strong);z-index:1;}
+.step-dot.locked{opacity:.55;}
+.step-dot.current{background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:#fff;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+.step-dot.done{background:var(--green);color:#fff;border-color:var(--green);}
+.step-body{flex:1;padding-top:3px;min-width:0;}
+.step-title{font-size:14.5px;font-weight:600;letter-spacing:-.01em;margin-bottom:2px;}
+.step-title.locked{color:var(--text3);}
+.step-meta{font-size:12px;color:var(--text3);}
+.step-row.clickable{cursor:pointer;}
+.step-row.clickable:hover .step-title{color:var(--accent-ink);}
+.module-page{max-width:760px;margin:0 auto;}
+.r-eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:8px;}
+.r-title{font-size:26px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px;}
+.r-sub{font-size:14.5px;color:var(--text2);margin-bottom:8px;}
+.r-meta{font-size:12.5px;color:var(--text3);margin-bottom:26px;}
+.reader{font-size:15px;line-height:1.72;color:var(--text);}
+.reader h2{font-size:17px;font-weight:600;letter-spacing:-.01em;margin:30px 0 12px;}
+.reader h3{font-size:14.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--text2);margin:24px 0 10px;}
+.reader p{margin:0 0 14px;color:var(--text2);}
+.reader ul,.reader ol{margin:0 0 14px;padding-left:22px;color:var(--text2);}
+.reader li{margin-bottom:7px;line-height:1.6;color:var(--text2);}
+.reader strong{color:var(--text);}
+.callout{display:flex;gap:11px;background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:13px 16px;margin:16px 0;}
+.callout .c-ic{font-size:16px;line-height:1.4;flex-shrink:0;color:var(--accent-ink);}
+.callout .c-tx{font-size:14.5px;line-height:1.6;color:var(--text2);}
+.callout .c-tx strong{color:var(--text);}
+.callout.warn{border-left-color:var(--amber);}.callout.warn .c-ic{color:var(--amber);}
+.callout.danger{border-left-color:var(--red);}.callout.danger .c-ic{color:var(--red);}
+.callout.info{border-left-color:var(--blue);}.callout.info .c-ic{color:var(--blue);}
+.awaiting{display:flex;gap:11px;background:var(--amber-bg);border:1px dashed var(--amber-border);border-radius:12px;padding:14px 16px;margin:16px 0;}
+.awaiting .a-ic{font-size:15px;flex-shrink:0;color:var(--amber-text);}
+.awaiting .a-tx{font-size:13.5px;line-height:1.6;color:var(--amber-text);}
+.awaiting .a-tx strong{font-weight:700;color:var(--amber-text);}
+.callout .c-tx strong{color:var(--text);}
+.script-card .why strong,.script-card .dont strong{color:var(--text);}
+.script{background:var(--bg3);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;font-style:italic;font-size:14.5px;line-height:1.6;color:var(--text2);margin:10px 0;}
+.script-card{border:.5px solid var(--border);border-radius:14px;padding:16px 18px;margin:14px 0;background:var(--card-bg);}
+.script-card h4{font-size:14.5px;font-weight:700;margin:0 0 8px;letter-spacing:-.01em;}
+.script-card .dont{font-size:13px;color:var(--text3);margin-top:10px;line-height:1.55;}
+.script-card .why{font-size:13.5px;color:var(--text2);margin-top:8px;line-height:1.55;}
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;}
+.tbl th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);padding:8px 10px;border-bottom:.5px solid var(--border-strong);}
+.tbl td{padding:10px 10px;border-bottom:.5px solid var(--border);color:var(--text2);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.quiz-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:16px;padding:22px 24px;margin-top:26px;}
+.quiz-progress{font-size:12px;color:var(--text3);margin-bottom:14px;}
+.quiz-q{font-size:16px;font-weight:600;letter-spacing:-.01em;margin-bottom:16px;line-height:1.45;}
+.quiz-opt{display:block;width:100%;text-align:left;padding:13px 15px;border-radius:12px;border:1px solid var(--border-strong);margin-bottom:9px;font-size:14.5px;color:var(--text);background:var(--bg2);transition:all .15s;}
+.quiz-opt:hover{border-color:var(--accent);}
+.quiz-opt.picked{border-color:var(--accent);background:var(--accent-soft);}
+.quiz-opt.correct{border-color:var(--green);background:var(--green-bg);color:var(--green-text);}
+.quiz-opt.incorrect{border-color:var(--red);background:var(--red-bg);color:var(--red-text);}
+.quiz-fb{font-size:13.5px;line-height:1.55;margin-top:10px;padding:12px 14px;border-radius:10px;background:var(--bg3);color:var(--text2);font-weight:600;}
+.quiz-fb.correct{background:var(--green-bg);color:var(--green-text);}
+.quiz-fb.incorrect{background:var(--red-bg);color:var(--red-text);}
+.quiz-dots{display:flex;gap:6px;margin-bottom:16px;}
+.quiz-dot{width:8px;height:8px;border-radius:50%;background:var(--border-strong);}
+.quiz-dot.active{background:var(--accent);width:20px;border-radius:99px;}
+.quiz-dot.answered{background:var(--text3);}
+.stub-gate{background:var(--card-bg);border:.5px solid var(--border);border-radius:16px;padding:22px 24px;margin-top:26px;}
+.stub-check{display:flex;align-items:flex-start;gap:12px;cursor:pointer;padding:6px 0;}
+.stub-box{width:22px;height:22px;border:1.5px solid var(--border-strong);border-radius:6px;flex-shrink:0;position:relative;margin-top:1px;transition:all .15s;}
+.stub-box.on{background:var(--accent);border-color:var(--accent);}
+.stub-box.on::after{content:'';position:absolute;left:6px;top:2px;width:6px;height:11px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg);}
+.stub-label{font-size:14.5px;line-height:1.55;color:var(--text2);}
+.mod-nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:26px;gap:10px;}
+.checklist-section{margin-bottom:10px;border:.5px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card-bg);}
+.checklist-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;transition:background .15s;gap:10px;}
+.checklist-head:hover{background:var(--bg3);}
+.checklist-head-l{display:flex;align-items:center;gap:11px;min-width:0;}
+.checklist-head-ic{font-size:17px;flex-shrink:0;}
+.checklist-head-tx h4{font-size:14.5px;font-weight:600;margin:0 0 2px;}
+.checklist-head-tx p{font-size:12.5px;color:var(--text3);margin:0;}
+.checklist-head svg{color:var(--text3);transition:transform .2s;flex-shrink:0;}
+.checklist-head svg.open{transform:rotate(180deg);}
+.checklist-body{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);background:var(--bg3);}
+.checklist-body.open{max-height:3000px;}
+.checklist-body-inner{padding:2px 16px 16px;}
+.check-group{margin:10px 0 4px;}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:9px 0;cursor:pointer;font-size:14.5px;line-height:1.55;border-bottom:.5px solid var(--border);}
+.check-item:last-child{border-bottom:none;}
+.check-item.done span{color:var(--text3);text-decoration:line-through;}
+.check-item input{margin-top:3px;}
+.res-card{display:flex;align-items:center;gap:14px;padding:16px 18px;border:.5px solid var(--border);border-radius:14px;background:var(--card-bg);margin-bottom:10px;transition:all .2s;}
+.res-card:hover{border-color:var(--accent);box-shadow:var(--shadow-sm);}
+.res-ic{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;color:var(--accent-ink);}
+.res-tx{flex:1;min-width:0;}
+.res-tx h4{font-size:14.5px;font-weight:600;margin:0 0 2px;}
+.res-tx p{font-size:12.5px;color:var(--text3);margin:0;}
+.res-arrow{color:var(--text3);flex-shrink:0;}
+.contact-card{border:.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;background:var(--card-bg);}
+.contact-card .cn{font-size:14px;font-weight:600;}
+.contact-card .cr{font-size:12px;color:var(--text3);margin-bottom:3px;}
+.contact-card .ce{font-size:12.5px;color:var(--accent-ink);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);border-radius:14px;padding:12px 20px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:999;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.locked-note{display:flex;align-items:center;gap:10px;background:var(--bg3);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--text3);margin-top:14px;}
+.video-embed{border-radius:14px;overflow:hidden;border:.5px solid var(--border);margin:14px 0;}
+.video-embed iframe{width:100%;aspect-ratio:16/9;border:none;display:block;}
+.video-fallback{display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;background:var(--bg3);color:var(--text3);font-size:13.5px;flex-direction:column;gap:10px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+@media (max-width:760px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+.kpi-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:14px;padding:16px 18px;}
+.kpi-val{font-family:var(--font-num);font-size:26px;font-weight:700;}
+.kpi-lbl{font-size:11.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+.filter-row{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.filter-chip{padding:7px 14px;border-radius:99px;font-size:12.5px;font-weight:600;background:var(--bg2);border:.5px solid var(--border-strong);color:var(--text2);}
+.filter-chip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.admin-tbl{width:100%;border-collapse:collapse;font-size:13.5px;}
+.admin-tbl th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);padding:10px 12px;border-bottom:.5px solid var(--border-strong);}
+.admin-tbl td{padding:12px;border-bottom:.5px solid var(--border);}
+.mod-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;flex-shrink:0;}
+.mod-row-name{display:flex;align-items:center;gap:10px;}
+.field-quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+@media (max-width:640px){.field-quick-grid{grid-template-columns:1fr;}}
+.field-quick-card{border:.5px solid var(--border);border-radius:14px;padding:16px 18px;background:var(--card-bg);cursor:pointer;transition:all .15s;}
+.field-quick-card:hover{border-color:var(--accent);}
+.field-quick-card h4{font-size:13.5px;font-weight:600;margin:0 0 4px;}
+.field-quick-card p{font-size:12px;color:var(--text3);margin:0;}
+.tree-node{border-left:2px solid var(--border-strong);padding-left:16px;margin:14px 0 14px 6px;}
+.tree-q{font-size:14px;font-weight:600;margin-bottom:8px;}
+.tree-a{font-size:13.5px;color:var(--text2);margin-bottom:6px;padding-left:10px;border-left:2px solid var(--accent-soft);}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px;}
+
+</style>
+</head>
+<body>
+<script>
+
+// ── VERSION (MAJOR.MINOR.MMDDYY) ────────────────────────────────────────────
+const APP_VERSION = '0.2.1.083126';
+
+// ── BACKEND CONFIG ───────────────────────────────────────────────────────────
+// LIVE as of this build -- these are Twilight's own GetDirectory/GetProgress/
+// SaveProgress flow URLs (cloned from Maple's). Not yet validated end-to-end
+// against a real Excel write -- see Twilight_Go_Live_Guide.md §2.5 for the
+// validation sequence to run before trusting this for a real cohort.
+const BACKEND = {
+  getDirectory: 'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/28/workflows/5dcf35f94c3d42a8a506b2c55f127d24/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=pUSP7J8ZaHEjH7py2W3SXsONkiugK0hU7Xq0XeKtXSc',
+  getProgress : 'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/00/workflows/ddf27ba16d3e498eb87c37b8b90d8473/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Qf3nyl94cSmqkx8tz_fm8atNGCbjPJ03XFVEnD94bfY',
+  saveProgress: 'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/31/workflows/846fcf03fd0847f898c7f524f3608d39/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=47NSfZcYxEN8kREZ5BAMGvm36OrLDNBlegRt8x1BwxA'
+};
+const LIVE = /^https?:\/\//.test(BACKEND.getDirectory);
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
+// FLAG BEFORE PRODUCTION DEPLOY: DEMO_DIRECTORY and the "Demo accounts:" hint
+// on the login screen are intentionally left in for now (per direct
+// instruction) so this file is testable the moment it's handed over. Remove
+// both -- this const and the hint-line in renderLogin() -- before real
+// moderators start using a live-wired build. See Team_Handoff.md action items.
+const DEMO_DIRECTORY = [{"email": "test.mod@centific.com", "name": "Test Moderator", "role": "moderator", "loc": "Redmond, WA", "tz": "PT", "active": "yes"}, {"email": "test.admin@centific.com", "name": "Test Admin", "role": "admin", "loc": "Redmond, WA", "tz": "PT", "active": "yes"}, {"email": "v-jordan.reyes@centific.com", "name": "Jordan Reyes", "role": "moderator", "loc": "Redmond, WA", "tz": "PT", "active": "yes"}, {"email": "v-priya.nandi@centific.com", "name": "Priya Nandi", "role": "moderator", "loc": "Redmond, WA", "tz": "PT", "active": "yes"}, {"email": "v-marcus.oyelaran@centific.com", "name": "Marcus Oyelaran", "role": "moderator", "loc": "Redmond, WA", "tz": "PT", "active": "yes"}];
+const MODULES = [{"id": "welcome", "ic": "&#127769;", "title": "Welcome to Twilight", "sub": "What this course covers and what to expect before we start.", "min": 3, "body": "\n<p>Welcome — you're about to start onboarding for Project Twilight. Before anything else, here's the shape of what you're signing up for and how this course works.</p>\n\n<h2>What Twilight is, in one paragraph</h2>\n<p>Twilight is a nighttime video data capture project. You'll drive to a participant's property after dark, set up a camera kit covering the yard and driveway, run a set of scenarios to a fixed specification, pack down, and leave. The next module goes deep on what Centific does and why; the module after that covers Twilight itself in full. This is just enough to orient you before that.</p>\n\n<h2>How this course works</h2>\n<ul>\n<li><strong>Modules unlock in order.</strong> Each one opens after you finish the one before it. You can always go back and re-read anything you've already completed.</li>\n<li><strong>Most modules end with a short knowledge check</strong> — a few questions to confirm you're reading, not clicking through. Answers are flagged, not blocking, except for the final check.</li>\n<li><strong>A few modules are still being finished</strong> by other teams as you go through this — you'll see them marked clearly, with a simple \"I've reviewed this\" checkbox standing in until the real content and questions are ready. Nothing about that is hidden from you.</li>\n<li><strong>A final scenario check</strong> comes after every module is complete — that's what actually certifies you for on-site training.</li>\n<li><strong>A Field Reference tab</strong> becomes available once you're in the app — keep it open on your phone during an actual session for quick access to scripts, escalation steps, and troubleshooting, without digging back through training content.</li>\n</ul>\n\n<div class=\"callout\"><div class=\"c-ic\">&#9432;</div><div class=\"c-tx\">If anything in this course is unclear, or a link looks broken, that's useful to know — route it to Ingrid Lindstrom (Training &amp; Development). You'll get her contact details, along with everyone else's, in the next couple of modules.</div></div>\n\n<p>Ready? Next up: who Centific actually is, and what your role means in practice.</p>\n", "gate": "none"}, {"id": "centific", "ic": "&#127760;", "title": "Who Is Centific", "sub": "Who we are, what the data collection team does, and what your role is.", "min": 7, "body": "\n<p>If a participant asks you who Centific is, this is all you need:</p>\n<div class=\"script\">Centific is a global data and AI company. We collect real-world video, speech and behavior so that AI systems learn to recognize the world as it actually looks — not just textbook examples. Tonight's captures become part of the training material that teaches those systems what they are looking at in the dark.</div>\n<p>Everything below is context so you can answer follow-up questions with confidence. You are not expected to recite it.</p>\n<div class=\"video-embed\"><div class=\"video-fallback\">&#9654; Representing Centific — video pending<br><span style=\"font-size:11.5px;\">A Maple recording exists but is desk/webcam framed; needs a short Twilight-specific re-record for doorstep arrival.</span></div></div>\n\n<h2>1. Who is Centific?</h2>\n<p>Centific is a global data and AI solutions company. We do not build the AI products you would recognize by name. We build the data those products learn from — which is why Centific is sometimes described as the hidden infrastructure behind AI models.</p>\n<p>Our clients are companies that build AI systems. They come to us because a model is only as good as the data it learned from, and good data does not exist by default. Someone has to go out and create it, carefully, with real people. That is our job.</p>\n<p>What we provide to those clients:</p>\n<ul>\n<li><strong>Data creation and collection.</strong> Speech, conversation, video, images, sensor data, and text are all types of data we collect. These are gathered in structured sessions like the ones you will run.</li>\n<li><strong>Human judgment and evaluation.</strong> Experts review, rate, correct, and label AI output so systems learn what a good answer looks like and where they get things wrong.</li>\n<li><strong>Language and cultural coverage.</strong> Data work in 350+ languages and regional variants, so AI works for people outside a handful of major markets.</li>\n<li><strong>Platforms and tooling.</strong> The systems that manage all the above at scale, including the tools you will use to run and submit sessions.</li>\n</ul>\n<p>The scale behind that: a network of over 1.8 million domain experts, working across 230+ markets and 50+ industries.</p>\n<p>Centific's mission line is <em>\"The Future Learns Here.\"</em> That is literal. The data collected in your sessions is what the technology learns from.</p>\n<div class=\"callout\"><div class=\"c-ic\">&#9432;</div><div class=\"c-tx\"><strong>One rule that never changes:</strong> we never disclose which client a project is for. Not to participants, not to friends, not on social media. That confidentiality is part of the agreement Centific has with every client, and it is part of your agreement with Centific.</div></div>\n\n<h2>2. What does the data collection team do?</h2>\n<p>The data collection team is the part of Centific that turns a client requirement into a finished, usable dataset. A client says, in effect, \"our system fails to have natural conversation in this language.\" The data collection team designs and runs the work that fixes it.</p>\n<p>End to end, that looks like:</p>\n<ol>\n<li><strong>Define the spec.</strong> What kind of speech or behavior is needed, in which languages, from which kinds of people, in what conditions, and what counts as acceptable quality.</li>\n<li><strong>Recruit and consent participants.</strong> Find people who match the profile, explain what they are agreeing to, and collect proper consent before anything is recorded.</li>\n<li><strong>Schedule and prepare.</strong> Match participants to sessions and moderators, confirm attendance, and make sure the tooling works before anyone joins.</li>\n<li><strong>Run the sessions.</strong> This is where you come in. Moderators run the actual recordings to the project format.</li>\n<li><strong>QA review.</strong> Every recording is checked against the project quality standards. Sessions that miss the bar are flagged, returned, or rejected.</li>\n<li><strong>Process and deliver.</strong> Accepted sessions are transcribed, labeled, packaged into a dataset, and delivered to the client to train and evaluate their system.</li>\n</ol>\n<p>Two things worth understanding about how the team works:</p>\n<ul>\n<li><strong>Quality is the product, not volume.</strong> A large pile of unusable recordings is worth nothing. The team is measured on how much data passes QA, not on how much was recorded.</li>\n<li><strong>Every stage depends on the one before it.</strong> A rejected session does not just cost one recording; it costs the participants' time, the recruiter's effort, and leaves a gap in the dataset that someone must fill again.</li>\n</ul>\n<p>As a Data Collection Moderator, you will mainly interact with your Project Manager (scheduling, questions, escalations) and, indirectly, with QA reviewers, whose feedback tells you whether your sessions are hitting the standard. Names and contact details for your specific project are covered in the point-of-contact module.</p>\n\n<h2>3. What is the Moderator role?</h2>\n<p>You are the person who runs the session and is responsible for the multimodal data (audio, video, text data) being usable. Every other stage of the pipeline is either preparing for your session or reacting to what you produced. You are also the person that functions as a calm, confident coach for the participant. You guide and show them how to act, speak, or interact so you can collect the data accurately.</p>\n<p>What the role involves:</p>\n<ul>\n<li><strong>Prepare.</strong> Check your equipment, environment, and the recording tool before the session starts — not while participants are waiting.</li>\n<li><strong>Set people at ease.</strong> Welcome participants, explain what is going to happen, and confirm they understand what they consented to. Nervous participants produce stiff, unnatural speech, which is exactly what the dataset does not need.</li>\n<li><strong>Hold the format.</strong> Keep the session inside the project specifications: the right structure, the right language behavior, and the right duration. A moderator coaches and works with the participant so they don't feel the session is like a test.</li>\n<li><strong>Keep the speech natural.</strong> Steer the conversation when it stalls, and step back when it is flowing. Communicate enough to capture the required data effectively.</li>\n<li><strong>Handle problems live.</strong> Noise, dropouts, a participant who goes off-format or uncomfortable — moderators deal with the situation in the moment and note it.</li>\n<li><strong>Submit correctly and flag issues.</strong> Follow the submission steps exactly, and tell your Project Manager about anything that went wrong. An honest flag is far cheaper than a surprise found in QA.</li>\n</ul>\n<p>Just as important, what the role is not:</p>\n<ul>\n<li><strong>You are not an interviewer or researcher.</strong> You are not there to collect opinions, test a product, or get to the truth of anything. The conversation or the acted scenario itself is the deliverable.</li>\n<li><strong>You are not the QA reviewer.</strong> You apply first-line quality judgment, but you do not decide whether a session is accepted. Flag it and let QA decide.</li>\n<li><strong>You are not the client's representative.</strong> You represent Centific. You cannot speak for the client, and you cannot name them.</li>\n<li><strong>You are not expected to improvise policy.</strong> If a participant asks something you were not briefed on, it is completely acceptable to route them to the centralized project email address. Centific's delivery team monitors this email account and addresses participant questions there.</li>\n</ul>\n<div class=\"callout\"><div class=\"c-ic\">&#9733;</div><div class=\"c-tx\"><strong>The core of the job:</strong> be warm enough that people forget they are being recorded, while quietly holding them to a technical spec. These are two sides of the same coin, and getting the balance right is the whole skill.</div></div>\n<p>You are also, for most participants, the only person from Centific they will ever meet. To them, you are the company. How you handle the session shapes whether they trust the process, whether they come back, and whether they tell other people this was a good experience.</p>\n\n<h2>Why we collect data — the honest answer</h2>\n<p>AI systems learn from examples. If the examples are narrow, the system is narrow. A vision system trained mostly on bright, tidy, well-lit daytime footage will do fine in a lab and then fail the moment it meets a real property after dark — a driveway lit by a single bulb, someone in dark clothing, a car moving behind a hedge, headlights washing across a wall, rain sitting on the lens.</p>\n<p>That failure is not an abstraction. It means a system that cannot tell a person from a shadow, that misses movement it should have caught, or that raises an alert for a branch moving in the wind — because scenes like that were not in the training data. It is the difference between technology people trust after dark and technology they switch off.</p>\n<div class=\"callout\"><div class=\"c-ic\">&#9679;</div><div class=\"c-tx\">Real night-time footage is genuinely hard to obtain. It cannot be scraped, and it cannot be convincingly simulated — darkness, artificial light, infrared, weather and motion all behave in ways a rendered scene gets subtly wrong. It has to be captured, with consent, at real properties, by people who agree to take part. That is why these sessions exist, and it is why the precision of your captures matters: the value is in exactly what moved, exactly where, and exactly how far away.</div></div>\n\n<h2>Saying it to a participant</h2>\n<p>Keep it short, plain, and honest. Something like:</p>\n<div class=\"script\">\"I work with Centific — we're a company that collects data used to train AI systems. Tonight we're recording video around your home after dark. The reason is that this kind of technology has to work in real conditions, and real night-time footage is genuinely hard to come by.\"</div>\n<div class=\"script\">\"The footage gets reviewed for quality and then goes into a dataset used to train that technology. You agreed to that in the consent form you signed, and you can stop or ask me anything at any point.\"</div>\n\n<h2>What not to say</h2>\n<ul>\n<li><strong>Never name the client.</strong> If asked which company the data is for, say plainly: \"I'm not able to share the client's name — that's part of our agreement with them. What I can tell you is what the data is used for.\" That is a complete, professional answer. Do not hint, do not guess, do not confirm a participant's guess.</li>\n<li><strong>Do not speculate.</strong> If you do not know how the data will be used beyond what you have been told, say so and offer to check with your point of contact.</li>\n<li><strong>Do not make promises</strong> about payment amounts, timelines, retention periods, or future work that are not in the project documentation you were given.</li>\n<li><strong>Do not oversell.</strong> \"You're helping build AI that understands people like you\" is true. \"Your voice will be in a famous product\" is not something you can promise.</li>\n</ul>\n\n<h2>Questions participants actually ask</h2>\n<ul>\n<li><strong>\"Who is this for?\"</strong> — Centific collects data on behalf of companies that build AI systems. You cannot name the client, and you can say that openly.</li>\n<li><strong>\"Will my house or my face be identifiable?\"</strong> — Be straightforward about what is in frame. The intended fields of view are the backyard, the driveway, and the front yard, so their property does appear. They appear only minimally, since the cameras are pointed at the space rather than at them. Beyond that, how the footage is handled, stored, and who can see it is set out in the consent form they signed, and DC_Project_US@centific.com answers anything the form does not. Do not speculate about de-identification or blurring.</li>\n<li><strong>\"What happens to my recording?\"</strong> — It is reviewed for quality, processed, and used as AI training data under the terms in the consent form. Handling and storage follow the project's data protection rules.</li>\n<li><strong>\"Am I doing it right?\"</strong> — Reassure them: there is no wrong way to do this. Just be yourself. This is usually the most useful thing you can say all session.</li>\n</ul>\n\n<h2>Why this matters for you</h2>\n<p>Participants relax when the person running the session sounds like they know what they are doing and why. A moderator who can explain the purpose in two clear sentences gets a more natural session — which is exactly what a Centific project is trying to capture. Confidence about the \"why\" is a quality tool, not just a courtesy.</p>\n", "gate": "quiz"}, {"id": "fundamentals", "ic": "&#127777;", "title": "Moderator Fundamentals", "sub": "What Twilight is, the doorstep handshake, what the role is not, and who to contact.", "min": 8, "body": "\n<h2>What Twilight is</h2>\n<p>Twilight is a nighttime video data capture project. You will drive to a participant's property after dark, set up a camera kit covering the backyard, the driveway and the front yard, run a set of captures to a fixed specification, pack down, and leave. Every session is at night.</p>\n<div class=\"callout\"><div class=\"c-ic\">&#9679;</div><div class=\"c-tx\"><strong>The captures happen outdoors.</strong> You will go inside briefly to reach the Wi-Fi modem, and that is the only reason you go inside. Nothing is captured indoors. Say this to participants unprompted — it is the single most reassuring thing you can tell someone who has just let a stranger with cameras into their house.</div></div>\n<p><strong>Participants run most of the scenarios themselves.</strong> Their appearance on camera is minimal, but it is not zero. You are there to make sure the capture is usable — the right framing, the right conditions, the right take — not to perform the scenario for them. Briefing clearly, and being willing to ask for a take again, is most of the job.</p>\n<p>Three facts shape almost everything else in this course: you are working after dark, you are working outside in view of the street and the neighbors, and the person whose property you are on is also the person running the scenario.</p>\n<p>You are the person who runs the session and is responsible for the captured data being usable. Every other stage of the pipeline is either preparing for your session or reacting to what you produced.</p>\n\n<h2>The doorstep handshake</h2>\n<p>You cannot rely on a Teams window to signal that you are the expected professional. Signal it the way the format allows:</p>\n<ul>\n<li>Wear your Centific-branded shirt. It is the fastest visual answer to \"who are you and why are you on my street.\"</li>\n<li>Wear your Centific ID badge on a lanyard, visible, for the entire visit — not in your pocket.</li>\n<li>Arrive within the window you gave them. You told them an ETA while you were en route; hold to it.</li>\n<li>Introduce yourself by your real first name at the door, before anything else.</li>\n</ul>\n<div class=\"script\">\"Hi, I'm [name]. I'm here from Centific for tonight's data capture session — we spoke earlier about the timing.\"</div>\n<div class=\"callout\"><div class=\"c-ic\">&#9432;</div><div class=\"c-tx\"><strong>\"From Centific,\" or \"on behalf of Centific,\" is the right phrasing and it matters.</strong> You work with Centific, not for Centific. Your agency is your employer. the Hours and Pay module covers why that distinction protects you.</div></div>\n<ul>\n<li>Confirm you are at the right address and speaking to the booked participant before you unload any equipment.</li>\n<li>Ask before you go inside, every time, even if you were inside twenty minutes ago. \"Do you mind if I step in to check the modem?\" costs nothing and it keeps the boundary clear.</li>\n<li>Inside the property, go to the modem and come back. Do not wander, do not open anything, do not photograph anything indoors.</li>\n</ul>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> Does Twilight use participant aliases the way Maple does, or are participants identified by name on the booking? This changes the doorstep script and every PII rule downstream. The rule below reflects Maple's default until this is confirmed.</div></div>\n\n<h2>What the role is not</h2>\n<ul>\n<li>You are not the client's representative. You represent Centific, you cannot speak for the client, and you cannot name them.</li>\n<li>You are not the QA reviewer. You apply first-line judgment, then flag. You do not decide whether a capture is accepted.</li>\n<li>You are not expected to improvise policy. If you are asked something you were not briefed on, routing it is the correct, professional answer — not a failure.</li>\n<li><strong>You are not security, and you are not a spokesperson to the public.</strong> If a neighbor or an officer approaches, your job is to stay calm, present the documents you carry, and notify your PC. It is not to win the conversation. The Nighttime Filming, Difficult Situations and Safety module covers this in full.</li>\n</ul>\n\n<h2>Who to contact</h2>\n<p><strong>For anything general, or when you are not sure who to ask:</strong> ben_prod_twilight@centific.com. It is monitored by the project team, so a message there reaches whoever is on shift. Use the named contacts below when you know what you need.</p>\n<table class=\"tbl\">\n<tr><th>If you need...</th><th>Contact</th><th>Role</th><th>Email</th></tr>\n<tr><td>Anything about Twilight: process, scheduling, sessions</td><td>Ritu Gupta</td><td>Sr. Program Manager</td><td>ritunarendrakumar.g@centific.com</td></tr>\n<tr><td>On-the-ground quality and operations</td><td>Sander Denecker</td><td>Program Manager</td><td>sander.denecker@centific.com</td></tr>\n<tr><td>Tooling: Ring, Lakitu, the task and checklist app</td><td>Brian Leong</td><td>Technical Project Coordinator</td><td>brian.leong@centific.com</td></tr>\n<tr><td>Day-to-day coordination and general queries</td><td>Annie Tran</td><td>Project Coordinator</td><td>thaingan.tran@centific.com</td></tr>\n<tr><td>Night-shift support while you are working</td><td>Sree Avula</td><td>Project Coordinator</td><td>sree.avula@centific.com</td></tr>\n<tr><td>Onboarding: this app, your progress, certification</td><td>Ingrid Lindstrom</td><td>Training &amp; Development</td><td>ingrid.lindstrom@centific.com</td></tr>\n<tr><td>Anything general, or you are not sure who to ask</td><td>The project team</td><td>—</td><td>ben_prod_twilight@centific.com</td></tr>\n<tr><td>Your pay, rate, bonuses, future work</td><td>Your agency</td><td>—</td><td>Centific cannot answer these. See the Hours and Pay module.</td></tr>\n</table>\n\n<h3>Where you send participants</h3>\n<table class=\"tbl\">\n<tr><th>Participant asks about...</th><th>Send them to</th></tr>\n<tr><td>The consent form they signed</td><td>DC_Project_US@centific.com</td></tr>\n<tr><td>How their data will be used, or who sees it</td><td>DC_Project_US@centific.com</td></tr>\n<tr><td>Withdrawing consent or deleting recordings</td><td>DC_Project_US@centific.com</td></tr>\n<tr><td>Anything about the session, scheduling, or rebooking</td><td>ben_prod_twilight@centific.com</td></tr>\n</table>\n<p><strong>You route these. You do not answer them.</strong> That is not a brush-off. It is how participants get an accurate answer instead of your best guess.</p>\n<p><strong>Read the address back when you give it to a participant.</strong> It takes a moment and it is what makes sure they reach the monitored account rather than emailing you directly.</p>\n\n<h2>Escalation</h2>\n<p>Default to Ritu or Sander for anything ambiguous. They will route it. Non-urgent things go to ben_prod_twilight@centific.com.</p>\n<p><strong>While you are on site, use the Twilight Teams channel, not email.</strong> The team watches Teams through the night; email will not be seen in time. Your Project Manager will add you to the channel and confirm its name before your first session — if you have not been added by then, say so.</p>\n<table class=\"tbl\">\n<tr><th>Tier</th><th>What it covers</th></tr>\n<tr><td>Handle it yourself</td><td>Routine session flow, everything the scripts cover, normal setup problems you can resolve.</td></tr>\n<tr><td>Flag in real time</td><td>Anything you cannot resolve safely on your own while it is happening: a neighbor confrontation, police arriving, an unworkable environment, a participant who appears intoxicated, inappropriate conduct toward you, a participant in visible distress.</td></tr>\n<tr><td>Report afterward</td><td>Resolved, but leadership must know: a canceled or cut-short session, a withdrawal request, any complaint from a participant or a neighbor, equipment damage. Same night.</td></tr>\n<tr><td>Escalate immediately</td><td>Legal, privacy, or safety weight: police contact of any kind, a lost or corrupted capture, a demand touching the consent form you cannot answer, an allegation of misconduct, harm or threat of harm. Notify Ritu and Sander and do not try to resolve it yourself.</td></tr>\n</table>\n", "gate": "quiz"}, {"id": "workflow", "ic": "&#128203;", "title": "Project Workflow", "sub": "The shape of a Twilight night, end to end — assignment through close-out.", "min": 12, "body": "\n<div class=\"callout\"><div class=\"c-ic\">&#9679;</div><div class=\"c-tx\"><strong>The one thing that is already settled:</strong> David's task and checklist app is the source of truth in the field. Not your phone notes, not a text from your PC, not memory. Everything you need on site — where you are going, the SOP, troubleshooting steps, the scenario list — lives in that one app so you are not juggling tabs in the dark.</div></div>\n<p>The shape of a Twilight night, end to end. Full detail on each stage below is still being written with David — the stage names and order are settled, the detail is not.</p>\n<h2>1. Your assignment</h2><p>Where you are going, when, and what kit you are carrying.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — David.</strong> How the assignment arrives — the task app, OneForma, or email.</div></div>\n<h2>2. Pre-session contact</h2><p>You message the participant to confirm. Covered in the Participant Communication module.</p>\n<h2>3. Travel and the ETA message</h2><p>You send an update while en route, roughly 20–30 minutes out. Covered in the Participant Communication module.</p>\n<h2>4. Arrival and the doorstep</h2><p>Covered in the Moderator Fundamentals module.</p>\n<h2>5. Setup</h2><p>Kit assembly and placement. Covered in the Device Handling and Hardware Setup module.</p>\n<h2>6. Calibration</h2><p>The pass/fail gate. Covered in the Device Handling and Hardware Setup module.</p>\n<h2>7. The captures</h2><p>The scenarios themselves, run to the client specification.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — David.</strong> The scenario list and specification.</div></div>\n<h3>7a. Directing the participant</h3><p>Participants run most scenarios themselves. What you brief them on, how you ask for a retake, what you do when a take is not usable. This is the part of the workflow moderators will lean on most.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ingrid.</strong> To expand once the session workflow is detailed.</div></div>\n<h2>8. Pack-down and departure</h2><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> Is there a chain-of-custody step for the kit, or does it stay with the moderator between sessions?</div></div>\n<h2>9. Close-out</h2><p><strong>Twilight does not use session logs</strong> — confirmed. Whatever record is required is captured in the task app, so there is no separate write-up.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — David.</strong> What the app asks you to record at close-out.</div></div>", "gate": "stub"}, {"id": "guidelines", "ic": "&#128196;", "title": "Client Guidelines, Moderator-Facing", "sub": "What must be captured, what invalidates a capture, what's left to your judgment.", "min": 15, "body": "\n<p>The client guidelines run to 43 pages. This module will be the moderator-facing reduction of that document — plain professional English, no client name, no material a moderator does not need in the field.</p>\n<div class=\"callout\"><div class=\"c-ic\">&#9733;</div><div class=\"c-tx\"><strong>Guiding constraint for the reduction:</strong> a moderator should never have to open the 43-page document. If they do, this module has failed.</div></div>\n<h2>What must be captured</h2><p>The non-negotiables of a valid session.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — David.</strong> Distillation session not yet booked.</div></div>\n<h2>What invalidates a capture</h2><p>The reject bar, stated plainly.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — David.</strong> Distillation session not yet booked.</div></div>\n<h2>What is left to your judgment</h2><p>And what is not.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — David.</strong> Distillation session not yet booked.</div></div>", "gate": "stub"}, {"id": "hardware", "ic": "&#128268;", "title": "Device Handling and Hardware Setup", "sub": "Kit familiarisation, setup sequence, and the calibration capture.", "min": 15, "body": "\n<p>The Twilight kit is not the Orbit kit. Even the four returning moderators are new to this hardware — everyone trains on it from scratch. This module is familiarisation before the on-site training day, not a replacement for it — moderators get hands-on with the actual kit that day.</p>\n<h2>Kit inventory</h2><p>What you are issued, what each piece does, what you check before you leave.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> Kit list and photographs.</div></div>\n<h2>Transport and care</h2><p>How it travels, what damages it.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> </div></div>\n<h2>Setup sequence</h2><p>Step by step, with photographs of a correct setup for each of the three fields of view — backyard, driveway, front yard.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> Client SME on site may be the source.</div></div>\n<h2>Network access</h2><p>Connecting the kit via the participant's Wi-Fi, which means going indoors to the modem. Covers conduct as well as the technical side.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> </div></div>\n<h2>Working outdoors after dark</h2><p>Weather, wet ground, cable runs across a driveway, where you can safely put a case down, what happens if it rains mid-session.</p><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> </div></div>\n<h2>Calibration captures</h2><div class=\"callout\"><div class=\"c-ic\">&#9733;</div><div class=\"c-tx\"><strong>The single highest-stakes step in the night.</strong> If the calibration capture is wrong, the entire session is unusable — not the one capture, the whole night. The participant's time, the drive, the setup and every scenario you filmed after it are all wasted. When unsure, redo it. A redone calibration costs ten minutes. A bad one costs the session.</div></div><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> </div></div>\n<h2>Pack-down</h2><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> </div></div>", "gate": "stub"}, {"id": "tools", "ic": "&#128241;", "title": "Ring and Lakitu", "sub": "Full tutorial on both applications — login, assignments, and session flow.", "min": 25, "body": "\n<p>A full tutorial on both applications, not an introduction. Moderators should arrive at on-site training able to operate both, not merely aware they exist.</p>\n<div class=\"video-embed\"><div class=\"video-fallback\">&#9654; Ring &amp; Lakitu walkthrough — video pending<br><span style=\"font-size:11.5px;\">Orbit recordings being checked; a fresh walkthrough will be recorded if none exist.</span></div></div>\n<h2>What this module will cover</h2>\n<ul>\n<li>A real, live login link to each platform, inside the module.</li>\n<li>How to check your own profile and confirm your assignment details.</li>\n<li>How to find tonight's session.</li>\n<li>Click-by-click through the flow, with real screenshots from the real tools.</li>\n</ul>\n<div class=\"callout\"><div class=\"c-ic\">&#9432;</div><div class=\"c-tx\">The four returning moderators already know both apps from Orbit. They still complete this module — the gating is sequential and there is no skip — but it will go quickly for them, and that is fine.</div></div><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> Orbit recordings if they exist, otherwise a fresh walkthrough by Sree or Annie.</div></div>", "gate": "stub"}, {"id": "troubleshooting", "ic": "&#128295;", "title": "Hardware Troubleshooting", "sub": "A decision tree for camera, Wi-Fi, and app-side faults in the field.", "min": 10, "body": "\n<p>Deliberately kept separate from the Hardware Setup module. Setting the kit up correctly and recovering when it misbehaves are different skills.</p>\n<div class=\"callout\"><div class=\"c-ic\">&#9679;</div><div class=\"c-tx\">A moderator reading this is standing in someone's hallway at 11pm with a camera that will not connect, and they need the next step, not an explanation. This module is structured as a decision tree, not prose.</div></div>\n<h2>Camera will not power or connect</h2><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu / IT.</strong> Rework from the Orbit troubleshooting document, once the Twilight SharePoint is available to host it.</div></div>\n<h2>Wi-Fi and network problems in the home</h2><div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu / IT.</strong> </div></div>\n<h2>App-side faults</h2><p>Cross-reference the Ring and Lakitu module.</p>\n<h2>When to stop</h2>\n<div class=\"callout\"><div class=\"c-ic\">&#9733;</div><div class=\"c-tx\"><strong>You are not expected to repair client hardware.</strong> Work the tree. If it is not resolved at the end of it, that is the correct time to escalate, and escalating is not a failure.</div></div>\n<div class=\"callout\"><div class=\"c-ic\">&#9733;</div><div class=\"c-tx\"><strong>A delayed session costs less than a bad one.</strong> If you cannot get the equipment into a state where the capture will pass, do not film anyway and hope. Stop, notify Sree or Brian, and let the session be rebooked.</div></div>\n", "gate": "stub"}, {"id": "comms", "ic": "&#128172;", "title": "Participant Communication", "sub": "The contact cadence, setting expectations, and nine on-site scripts.", "min": 12, "body": "\n<h2>The contact cadence</h2>\n<p>A participant hears from Centific four times before you arrive. Knowing where you sit in that sequence stops you repeating information they already have, or assuming they have information they do not.</p>\n<table class=\"tbl\">\n<tr><th>#</th><th>Who</th><th>What</th></tr>\n<tr><td>1</td><td>Scheduling team</td><td>Reaches out to check availability and agree a night.</td></tr>\n<tr><td>2</td><td>Automated</td><td>Booking confirmation email, sent to the participant and to you.</td></tr>\n<tr><td>3</td><td>You</td><td>A message before the session confirming you are coming and when.</td></tr>\n<tr><td>4</td><td>You</td><td>An ETA update while you are en route, roughly 20–30 minutes out.</td></tr>\n</table>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu / Ingrid.</strong> Which channel touchpoints 3 and 4 go through has not been decided. Until it lands, the scripts below say \"the approved channel\" rather than naming one — this is not a stand-in for your personal phone number by default.</div></div>\n\n<h2>Setting expectations at the door</h2>\n<p>Before you set anything up, walk the participant through the shape of the evening so nothing comes as a surprise:</p>\n<ul>\n<li>How long you expect to be in their home.</li>\n<li>Where you will need to place equipment, and that you will ask before moving anything of theirs.</li>\n<li>That the lighting will be bright at times, and roughly when.</li>\n<li>That you may need to redo a capture, that this is completely normal, and that it is never a comment on them.</li>\n<li>That they will be running most of the scenarios themselves, and that you will brief them on each one before it starts.</li>\n<li>That their own appearance on camera is minimal, and that nothing is filmed indoors.</li>\n<li>That they can stop, pause, or ask you anything at any point.</li>\n</ul>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — David / Ritu.</strong> The actual session shape — duration, number of captures, what the participant is asked to do. Flows from the Project Workflow and Client Guidelines modules once their content lands.</div></div>\n\n<h3>What the participant leaves with</h3>\n<p>By the time you pack down, every participant should know:</p>\n<ul>\n<li>That the captures were completed and submitted successfully.</li>\n<li>When and how they will be paid.</li>\n<li>Who to contact afterward, and that it is not you.</li>\n<li>That they will not receive or review copies of the footage.</li>\n</ul>\n<p>Thank them explicitly at the close. They let a stranger into their home at night and rearranged their evening around it.</p>\n\n<h2>Scripts</h2>\n\n<div class=\"script-card\"><h4>8.1 &middot; A nervous or hesitant participant</h4>\n<p>Someone who agreed to this weeks ago and is now, at 9pm, watching a stranger set up cameras in their driveway and having second thoughts.</p>\n<div class=\"script\">\"You're in exactly the right place — and honestly, most people feel a bit odd about this bit. I'm [name], I'll talk you through everything before anything gets switched on, and you can stop me at any point.\"</div>\n<p>If they still look uneasy:</p>\n<div class=\"script\">\"Nothing gets filmed inside the house — the cameras are pointed at the yard and the driveway. And you're barely in shot at all; I'll talk you through each bit before we start it.\"</div>\n<div class=\"why\"><strong>Why.</strong> Warmth in the first thirty seconds sets the tone for the whole visit. Naming the awkwardness defuses it far better than pretending it is not there.</div>\n<div class=\"dont\"><strong>Don't:</strong> start unpacking before you have said hello properly &middot; rush the setup because you are behind &middot; hint at the client.</div>\n</div>\n\n<div class=\"script-card\"><h4>8.2 &middot; An unprepared participant</h4>\n<p>A participant admits they did not read the materials, or a second household member appears who was not expecting you.</p>\n<div class=\"script\">\"No problem at all. Here's the short version: I'll set up some cameras, we'll run through a set of short scenarios, and then I pack everything away and I'm out of your evening. You don't need to prepare anything.\"</div>\n<p><strong>Before you set up,</strong> confirm consent is complete. If anything is outstanding, do not begin. Route the participant to DC_Project_US@centific.com and notify your PC.</p>\n<div class=\"dont\"><strong>Don't:</strong> make them feel judged &middot; describe client specifications &middot; skip the walkthrough because you are behind. An unoriented participant costs more time than it saves.</div>\n</div>\n\n<div class=\"script-card\"><h4>8.3 &middot; \"Who is this for?\"</h4>\n<div class=\"script\">\"Fair question, and I'm not able to name the company. How the footage gets used and who has access to it is all set out in the consent form you signed, so that's the best place to look. If you want more detail than what's in there, email DC_Project_US@centific.com and they'll answer it properly.\"</div>\n<div class=\"why\"><strong>Why.</strong> You do not need to restate the consent form and you do not need to explain what the client wants the data for. The participant already holds the document that answers this. Pointing to it is faster, and more accurate, than your paraphrase.</div>\n<div class=\"dont\"><strong>Don't:</strong> name or guess at the client &middot; confirm a participant's guess &middot; hint at the industry &middot; interpret the consent terms &middot; get flustered instead of routing cleanly.</div>\n</div>\n\n<div class=\"script-card\"><h4>8.4 &middot; Payment questions</h4>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> Participant payment terms for Twilight: basis, method, timing, and what happens if a session is cut short. This script can't ship with real numbers until those are confirmed.</div></div>\n<p><strong>The rule that holds regardless of the numbers:</strong> you are empowered to state the facts on the participant's agreement. You are not responsible for managing payment. Answer, anchor to the agreement they signed, route anything further. Never quote a figure that is not on their agreement, never promise a date, never offer to chase a payment personally.</p>\n</div>\n\n<div class=\"script-card\"><h4>8.5 &middot; Technical problems and waiting</h4>\n<div class=\"script\">\"Sorry about the wait — that's on our end, not yours, and I appreciate your patience. Nothing you did caused this.\"</div>\n<div class=\"why\"><strong>Why.</strong> Setup and troubleshooting take visible time in someone's home, and silence while you work reads as something having gone wrong. Naming it before they ask keeps it ordinary.</div>\n<div class=\"dont\"><strong>Don't:</strong> get defensive &middot; offer any form of compensation to smooth it over &middot; let frustration into your tone &middot; push ahead when the setup is compromised.</div>\n</div>\n\n<div class=\"script-card\"><h4>8.6 &middot; A participant wants to stop</h4>\n<div class=\"script\">\"Absolutely. You can stop at any time and that's completely okay. No explanation needed.\"</div>\n<div class=\"why\"><strong>Why.</strong> Honor it immediately and without friction. Any hesitation reads as pressure. If they ask about payment, give them the routing address and do not guess at a number. Never use payment as an argument for staying.</div>\n<p><strong>If they do not raise payment, do not raise it either.</strong> Volunteering \"you'll be paid less if you stop\" to someone mid-decision is pressure, whatever the intent.</p>\n<p>Questions about withdrawing consent or deleting footage go to DC_Project_US@centific.com. Do not describe the process yourself.</p>\n</div>\n\n<div class=\"script-card\"><h4>8.7 &middot; A participant negotiates scope</h4>\n<div class=\"script\">\"I hear you — let's keep it moving. Each of these is part of what makes the set usable, so I can't drop them. But I can keep us efficient, and we can take a break whenever you want.\"</div>\n<p>And the distinction that matters:</p>\n<div class=\"script\">\"If something feels uncomfortable rather than just long, tell me. That's different, and we can pause or stop.\"</div>\n<div class=\"why\"><strong>Why.</strong> \"This is taking a while\" and \"I want this to stop\" need genuinely different responses, and conflating them is how you end up pressuring someone.</div>\n<div class=\"dont\"><strong>Don't:</strong> agree to cut captures &middot; improvise prorated pay &middot; frame it as \"no pay unless you finish,\" which is coercive.</div>\n</div>\n\n<div class=\"script-card\"><h4>8.8 &middot; \"Can I see the footage?\"</h4>\n<div class=\"script\">\"I completely understand wanting to, and most people ask. I'm not able to play anything back — it goes straight into a secure workflow and isn't reviewed here. How it's stored is set out in the form you signed, and DC_Project_US@centific.com can answer anything beyond that.\"</div>\n<div class=\"why\"><strong>Why.</strong> Validate the curiosity before holding the line. It is a reasonable thing to want, and treating it as suspicious sours the rest of the visit.</div>\n</div>\n\n<div class=\"script-card\"><h4>8.9 &middot; Someone walks into frame</h4>\n<p>The captures cover a backyard, a driveway and a front yard. The participant is in shot at times, by design. Nobody else should be — not another household member, not a visitor, not a dog walker, not a neighbor. None of them signed anything.</p>\n<div class=\"script\">\"Sorry — could I ask everyone else to stay clear of the driveway for the next few minutes? Only [participant] can be in these.\"</div>\n<p><strong>Before you start,</strong> ask who else is home, whether anyone is expected, and whether there are pets with access to the yard. Agree where everyone will be while you film. Doing this once at the start saves stopping repeatedly later.</p>\n<div class=\"why\"><strong>Why.</strong> Anyone on camera is a privacy failure, not a quality one, and it cannot be fixed afterward. Outdoors it will happen more often than anyone expects, so treat it as routine rather than as an incident — redo the capture, no drama, no apology needed from them.</div>\n<div class=\"dont\"><strong>Don't:</strong> push ahead hoping it will be fine &middot; let a passer-by remain in frame &middot; ask a neighbor to sign anything &middot; follow someone down the street to ask them to move.</div>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Sander / legal.</strong> How far the consent covers what is unavoidably in shot (street, parked cars, a neighboring property). Under review alongside the neighbor protocol.</div></div>\n</div>\n\n<h2>Session debrief: what you may tell them afterward</h2>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu / Drew.</strong> What a moderator may tell a participant about their own session after the fact — whether it passed, what happens next, whether they may be contacted again. Until this lands, route any such question to DC_Project_US@centific.com rather than answering it yourself.</div></div>\n\n<h2>Two PII rules, and they are absolute</h2>\n<p>Twilight uses real names, so the participant's name is on your booking and you will say it at the door. That makes the limits on it more important, not less.</p>\n<ul>\n<li><strong>Never spoken while a camera is rolling.</strong> The name is not part of the data and must not end up in it. Between takes, say \"the participant.\"</li>\n<li><strong>Never written anywhere the booking does not already hold it.</strong> Not in task-app free text, not in a message, not in an escalation note. Use the session reference instead. Logs are retained and reviewable, so writing a name in order to correct it is what puts it permanently in the record.</li>\n</ul>\n", "gate": "quiz"}, {"id": "safety", "ic": "&#128737;", "title": "Nighttime Filming, Difficult Situations and Safety", "sub": "Neighbors, police, difficult participants, and your own safety.", "min": 15, "body": "\n<h2>Why the night changes things</h2>\n<p>On a daytime project, a camera crew at a house is unremarkable. At night it is not. Floodlights cycling on and off in a residential street will be noticed, and some of the people who notice will be trying to sleep. Ritu's Orbit experience is the useful baseline: across more than 350 daytime homes, exactly one neighbor raised a concern, and it was handled well but without a protocol. Twilight expects more of them, and expects that some will call the police.</p>\n<p>You are also working outdoors, in a driveway and a front yard, under lights. That makes you visible from the street for the whole session in a way an indoor crew would not be. Most nights this means nothing. Some nights it means someone comes over to ask what you are doing.</p>\n<p>None of that is a reason for anxiety. It is a reason to have an answer ready before you need it, which is what this module is for.</p>\n\n<h2>What you carry</h2>\n<p>Every one of these is a document or object that answers \"who are you and why are you here\" without you having to improvise:</p>\n<ul>\n<li>Your Centific ID badge, worn visibly.</li>\n<li>Your Centific-branded shirt.</li>\n<li>A posted banner at the collection site indicating an authorized data collection project is in progress.</li>\n<li>The redacted NDA and the participant-signed consent form for the home you are at. The redaction removes the client name and the specific camera models; everything else is intact and can be shown. This is the Orbit precedent and it worked.</li>\n<li>A plain-language project description on Centific letterhead, written for a neighbor or an officer — no client, no technical detail.</li>\n</ul>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — legal.</strong> Exact banner wording, and the letterhead handout (Ingrid to draft, legal to approve).</div></div>\n\n<h2>Scripts</h2>\n\n<div class=\"script-card\"><h4>9.1 &middot; A neighbor approaches</h4>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Sander / Ritu / legal.</strong> The neighbor protocol below is a reasonable working draft — it has not yet been reviewed.</div></div>\n<div class=\"script\">\"Hi — I'm [name], I'm here from Centific. We're running an authorized data collection session at this address with the homeowner's consent. Here's the documentation. I'm sorry about the lights; we expect to be finished by around [time].\"</div>\n<p><strong>Then:</strong> if they want more than that, give them the letterhead handout and the project email address. Do not extend the conversation.</p>\n<p><strong>Split the job.</strong> One of you talks to the neighbor; the other pauses the capture and stays with the kit. Do not both walk away from the equipment, and do not leave a capture running while a conversation is happening in shot.</p>\n<div class=\"why\"><strong>Why.</strong> A neighbor usually wants two things: reassurance that this is legitimate, and an end time. Give them both quickly and most conversations end there.</div>\n<div class=\"dont\"><strong>Don't:</strong> name the client &middot; discuss what is being filmed &middot; argue &middot; promise to turn the lights off &middot; give out your personal contact details &middot; let it pull you away from an active capture without pausing properly.</div>\n<p><strong>Report it.</strong> Every neighbor interaction goes to your PC the same night, even the friendly ones. A pattern on one street matters more than any single conversation.</p>\n</div>\n\n<div class=\"script-card\"><h4>9.2 &middot; Police arrive</h4>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Sander / Ritu / legal.</strong> Same dependency as above, and this script specifically needs legal review before it ships as final.</div></div>\n<div class=\"script\">\"Good evening, officer. I'm [name], I work with Centific. We're conducting an authorized data collection session at this address with the homeowner's written consent. I have my ID and the consent documentation here.\"</div>\n<p><strong>Then:</strong> present your ID and the redacted consent pack, point to the posted banner, and notify Ritu and Sander immediately — during the interaction if you safely can, straight afterward if not. This is a tier-four escalation.</p>\n<p><strong>Comply with any instruction given to you.</strong> If you are asked to stop filming, stop filming. Nothing about this project is worth a dispute with an officer, and no one at Centific will second-guess you for complying.</p>\n<p><strong>One of you speaks.</strong> Agree in the moment who that is — two people answering an officer at once reads badly and gets the details wrong. The other stops the capture and calls the PC.</p>\n<div class=\"dont\"><strong>Don't:</strong> name the client &middot; speculate &middot; hand over equipment or footage without contacting your PC first &middot; ask the participant to intervene on your behalf.</div>\n</div>\n\n<div class=\"script-card\"><h4>9.3 &middot; A participant appears intoxicated</h4>\n<div class=\"script\">\"We're not going to be able to continue tonight. I'm going to pack up here. Take care.\"</div>\n<p>Then pack down and leave. Do not explain, do not debate, do not discuss payment, do not offer to reschedule.</p>\n<div class=\"why\"><strong>Why.</strong> Giving a reason gives someone something to argue with. Stay neutral. Never use the words \"drunk,\" \"high,\" or \"intoxicated\" — to them or in your log. Describe behavior in your escalation, not conclusions.</div>\n<p><strong>Escalate:</strong> contact your PC as soon as you are out of the property. Same night.</p>\n</div>\n\n<div class=\"script-card\"><h4>9.4 &middot; Inappropriate conduct toward you</h4>\n<p>Redirect once, firmly:</p>\n<div class=\"script\">\"I'm here in a professional capacity, so let's keep the focus on the session.\"</div>\n<p>If it continues:</p>\n<div class=\"script\">\"I need this to stay professional. If that's not workable, I'm going to pack up and go.\"</div>\n<p><strong>Then do it.</strong> One clear redirect, then a clean line, then you leave. You do not owe a completed session to anyone who has made you uncomfortable, and you will not be asked to justify the decision.</p>\n<p><strong>Tell your teammate straight away</strong> — do not wait until you are back in the car. You pack up and leave together, and they can call the PC while you get the kit out.</p>\n<div class=\"dont\"><strong>Don't:</strong> laugh it off or play along &middot; over-explain or negotiate the boundary &middot; stay out of politeness &middot; wait until it escalates further to act.</div>\n<p><strong>Escalate:</strong> Ritu and Sander, the same night, and document it in neutral observable terms.</p>\n</div>\n\n<h2>Your own safety comes first</h2>\n<p>This is the shortest section in the course and the one that matters most.</p>\n<div class=\"callout\"><div class=\"c-ic\">&#9733;</div><div class=\"c-tx\"><strong>You may leave a property at any time, for any reason, including a reason you cannot articulate.</strong> If a street, a house, or a person feels wrong, you do not need to justify it, get permission, or finish the session first. Leave, get somewhere safe, and call your PC from there. No capture on this project is worth your safety, and nobody at Centific will ask you to explain the call.<br><br><strong>And you leave together.</strong> If either of you wants to go, you both go. Neither of you has to talk the other into it, and neither of you finishes a session alone.</div></div>\n<div class=\"callout\"><div class=\"c-ic\">&#128101;</div><div class=\"c-tx\"><strong>You are never at a property alone.</strong> Working in pairs is the protocol, and it is the main reason the risks in this module stay manageable. It is not a preference to trade away on a busy night.<br><br>Still tell your PC when you arrive and when you leave, every property, every session. Your teammate keeps you safe on site; the check-in is what makes sure someone off-site knows where the two of you are.</div></div>\n", "gate": "quiz"}, {"id": "hourspay", "ic": "&#128176;", "title": "Your Hours and Pay", "sub": "When your paid time starts, your timesheet, and how you're paid.", "min": 6, "body": "\n<h2>When your paid time starts</h2>\n<p>The qualification assessment you completed before onboarding was not paid. This onboarding training is. From the moment you reach this app, your time counts. Log your onboarding hours in Samay against the Project ID your Project Manager gives you.</p>\n<div class=\"awaiting\"><div class=\"a-ic\">&#9632;</div><div class=\"a-tx\"><strong>AWAITING — Ritu.</strong> The paid-from-day-one policy above is inherited from Maple by default — it still needs Ritu's confirmation that the same applies on Twilight, and the rate itself is unconfirmed (it's an open item on Maple too).</div></div>\n<div class=\"callout\"><div class=\"c-ic\">&#9432;</div><div class=\"c-tx\">This course is deliberately written without a Project ID — every project has its own, issued late. Your PM will give you yours; the course never needs to know it.</div></div>\n\n<h2>Your timesheet</h2>\n<p>Go to <strong>timesheet.centific.com</strong> and choose \"Login by SSO.\" Use your Centific v-dash email credential and password. Your moderator email address was provided by Centific IT in your welcome letter.</p>\n<div class=\"video-embed\"><div class=\"video-fallback\">&#9654; Samay timesheet login walkthrough<br><a href=\"#\" onclick=\"toast('Video embed slot — wire in the Maple Samay recording (project-agnostic, no re-record needed).');return false;\">Open video &#8599;</a></div></div>\n<p><strong>Your Samay hours become your paycheck.</strong> The approved-hours figure your Project Manager submits is built from what you logged. Late or missing entries delay your own payment.</p>\n\n<h2>You work with Centific. Your agency employs you.</h2>\n<p>Two different relationships, and keeping them clear protects you. Centific directs the work: what the sessions need, how the data is captured, what good quality looks like. Your agency is your employer — they hold your contract, they pay you, and they handle your terms. Your Centific email starts with v- for exactly this reason: it marks you as working through a vendor rather than as staff.</p>\n<p><strong>How to describe the work:</strong> you are a moderator working with Centific, not for Centific. To participants, you moderate on behalf of Centific. On LinkedIn or a CV, list your agency as your employer and describe the work as data collection moderating carried out on behalf of Centific. Do not list Centific as your employer or give yourself a Centific job title.</p>\n<table class=\"tbl\">\n<tr><th>If it is about...</th><th>Ask</th></tr>\n<tr><td>Doing the work — guidelines, tools, scheduling, quality, support mid-session</td><td>Centific (your PM)</td></tr>\n<tr><td>Your employment — pay, rate, contract, hours, time off, benefits, taxes, future work</td><td>Your agency</td></tr>\n</table>\n<p>Centific staff cannot change your rate, approve a bonus, negotiate more hours, or promise future work. If you raise these they will point you back to your agency. That is not a brush-off — they have no authority to act, and your agency does.</p>\n\n<h2>How you are paid</h2>\n<p>As a C2C moderator your contract is with your agency. You log hours in Samay, you reconcile them with your Project Manager, the PM approves them at the close of each two-week period, and Centific reports them onward to your agency. Your agency issues payment.</p>\n<p>Timing depends on your agency. If yours pays biweekly, the standard schedule is:</p>\n<table class=\"tbl\">\n<tr><th>Work period</th><th>Paid around</th></tr>\n<tr><td>1st – 15th</td><td>30th / 31st of that month</td></tr>\n<tr><td>16th – end of month</td><td>15th of the following month</td></tr>\n</table>\n<table class=\"tbl\">\n<tr><th>Question</th><th>Ask</th></tr>\n<tr><td>\"My hours don't look right\"</td><td>Your Project Manager</td></tr>\n<tr><td>\"When will I be paid?\"</td><td>Your agency</td></tr>\n<tr><td>\"What is my rate?\"</td><td>Your agency</td></tr>\n<tr><td>\"Can I get a raise, a bonus, or more hours?\"</td><td>Your agency</td></tr>\n</table>\n", "gate": "quiz"}];
+const MOD_QUESTIONS_DEFAULT = {"centific": [{"q": "Which best describes what Centific does?", "opts": ["It builds and sells its own consumer voice assistant", "It is a market research firm that runs opinion polls", "It creates and collects high-quality human data, and adds expert human judgment, so companies can train and evaluate AI systems", "It is a translation agency"], "a": 2}, {"q": "A participant asks which company will receive the recordings. What do you do?", "opts": ["Name the client, since the participant has already signed a consent form", "Say you are not able to share the client name, and explain what the data is used for instead", "Hint at the industry so they can work it out", "Tell them you have no idea what the data is for"], "a": 1}, {"q": "What is the data collection team measured on?", "opts": ["The total number of sessions recorded, regardless of outcome", "How much data passes QA and can actually be used", "How quickly participants are recruited", "The number of languages covered in a single project"], "a": 1}, {"q": "Which of these is NOT part of the moderator role?", "opts": ["Checking equipment and tooling before the session starts", "Keeping the session within the project format", "Deciding whether a recording is accepted or rejected", "Flagging problems to your point of contact after a session"], "a": 2}], "fundamentals": [{"q": "What is the only reason you go inside a participant's home during a Twilight session?", "opts": ["To use the restroom if needed", "To reach the Wi-Fi modem", "To set up an indoor calibration shot", "To confirm the participant's ID indoors"], "a": 1}, {"q": "You're about to unload equipment. What must you confirm first?", "opts": ["That the participant has signed the form a second time", "That you are at the right address and speaking to the booked participant", "That the neighbors are aware of the session", "That your agency has approved the visit"], "a": 1}, {"q": "A participant asks a policy question you weren't briefed on. What's the correct move?", "opts": ["Improvise a reasonable-sounding answer", "Tell them you don't know and end the conversation there", "Route it — to the contact table or ben_prod_twilight@centific.com", "Guess based on how Maple handles it"], "a": 2}, {"q": "Which channel should you use while on site at night for anything time-sensitive?", "opts": ["Personal text message to your PC", "Email", "The Twilight Teams channel", "Whatever the participant suggests"], "a": 2}], "comms": [{"q": "A participant asks \"who is this for?\" What do you do?", "opts": ["Give your best guess based on the equipment", "Say you can't name the company and point them to the consent form / DC_Project_US@centific.com", "Change the subject", "Tell them to ask the neighbor"], "a": 1}, {"q": "A participant wants to stop the session mid-way. What's the correct response?", "opts": ["Ask them to at least finish the current capture", "Mention that stopping early may affect their pay", "Honor it immediately, no explanation needed, then route any payment question", "Try to talk them out of it"], "a": 2}, {"q": "Someone who isn't the participant walks into the shot outdoors. What do you do?", "opts": ["Keep filming — outdoor spaces are public anyway", "Ask them to step out of frame, then redo the capture, treating it as routine", "Ask them to sign a consent form on the spot", "Stop the whole session for the night"], "a": 1}, {"q": "A participant asks to see the footage you just captured. What's the right response?", "opts": ["Play it back briefly since it's their own property", "Explain you can't play it back — it goes into a secure workflow — and point to the consent form / DC_Project_US@centific.com", "Tell them footage review isn't allowed by law", "Offer to send them a copy later"], "a": 1}], "safety": [{"q": "A participant appears intoxicated. What's the correct response?", "opts": ["Continue the session but note it in the log", "Explain clearly why you're stopping, then leave", "Say only that you can't continue tonight, pack up, and go — no explanation or debate", "Ask them to confirm they're okay to proceed"], "a": 2}, {"q": "Police arrive mid-capture. What do you do?", "opts": ["Keep filming since you have consent", "Present your ID and consent documentation, comply with any instruction, and notify Ritu and Sander immediately", "Call the participant out to explain", "Pack up and leave without saying anything"], "a": 1}, {"q": "What should you always do after a neighbor interaction, even a friendly one?", "opts": ["Nothing — only escalate confrontational ones", "Report it to your PC the same night", "Give the neighbor your personal number in case they have follow-up questions", "Wait to see if it becomes a pattern before reporting"], "a": 1}, {"q": "If a property or situation just feels wrong to you, with no specific incident you can point to, what can you do?", "opts": ["Nothing — you need a concrete reason to leave", "Leave immediately, without needing to justify it, and call your PC once safe", "Finish the session first, then mention it afterward", "Ask the participant if everything is okay before deciding"], "a": 1}], "hourspay": [{"q": "When does your paid time for this onboarding start?", "opts": ["Only once you're certified", "From the moment you reach this app", "Only during live sessions, not training", "After your first session with a participant"], "a": 1}, {"q": "Who is your actual employer as a C2C moderator?", "opts": ["Centific", "Your agency", "The client", "Whoever pays fastest"], "a": 1}, {"q": "A moderator asks Centific staff for a raise. What's the correct response?", "opts": ["Centific staff can approve it directly", "Point them to their agency — Centific has no authority to change pay/rate/hours", "Tell them it's not allowed to ask", "Offer a bonus from the project budget"], "a": 1}]};
+const FINAL_CHECK_DEFAULT = [{"q": "A participant asks who the footage is being collected for.", "opts": ["Name the client — they signed the NDA", "Say you are not able to share the client name, explain what the data is used for, and point to the consent form", "Hint at the industry so they can work it out", "Tell them you do not know"], "a": 1}, {"q": "A participant messages you at 2am, upset about the session.", "opts": ["Handle it yourself — you were there", "Route them to the project email address and notify your PC", "Reply in the morning", "Ignore it"], "a": 1}, {"q": "Your calibration capture looks slightly off, but everything after it ran clean.", "opts": ["Submit it — the main captures are what matter", "Note it in the log and move on", "Redo the calibration — without a correct one the whole session is unusable", "Ask the participant whether it looked alright"], "a": 2}, {"q": "On site, which app is your source of truth?", "opts": ["Ring", "Lakitu", "The Centific task and checklist app", "Whatever your PC texts you"], "a": 2}, {"q": "It is 1am and Lakitu will not load your session.", "opts": ["Wait until morning", "Contact Sree, the night-shift coordinator", "Email the client", "Cancel and go home"], "a": 1}, {"q": "You arrive and a second person is in the house who is not named on the consent form.", "opts": ["Carry on — they are not the participant", "Ask them to stay out of frame and continue", "Check who is home before setting up, and do not capture anyone not on the form", "Have them sign the form themselves"], "a": 2}];
+const FINAL_CHECK_PASS_PCT = 80;
+const TOTAL_MIN = 128;
+
+// ── CURRICULUM (editable quiz Q&A) ──────────────────────────────────────────
+// Live, mutable copies -- admin edits (Curriculum tab) change these in place.
+// Renders always read MOD_QUESTIONS / FINAL_CHECK, never the _DEFAULT copies,
+// so "reset to defaults" is just re-cloning from the _DEFAULT originals.
+let MOD_QUESTIONS = JSON.parse(JSON.stringify(MOD_QUESTIONS_DEFAULT));
+let FINAL_CHECK = JSON.parse(JSON.stringify(FINAL_CHECK_DEFAULT));
+function getModQuestions(id){ return MOD_QUESTIONS[id] || []; }
+
+// PLACEHOLDER -- Twilight needs its own Curriculum table + GetCurriculum/
+// SaveCurriculum flows for edits to reach every moderator's device. Until
+// that's wired, edits persist to THIS BROWSER ONLY via localStorage -- see
+// Twilight_PA_Setup_Guide.md and Dev_Notes.md before relying on this for a
+// real cohort.
+const CURRICULUM_STORE_KEY = 'twilight_curriculum_overrides_v1';
+function loadCurriculumOverrides(){
+  try{
+    const raw = localStorage.getItem(CURRICULUM_STORE_KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    if(d.modQuestions) MOD_QUESTIONS = d.modQuestions;
+    if(d.finalCheck) FINAL_CHECK = d.finalCheck;
+  }catch(e){}
+}
+function saveCurriculumOverrides(){
+  try{ localStorage.setItem(CURRICULUM_STORE_KEY, JSON.stringify({modQuestions: MOD_QUESTIONS, finalCheck: FINAL_CHECK})); }catch(e){}
+}
+function resetCurriculum(){
+  if(!confirm('Reset all quiz and final-check edits back to the built-in defaults? This cannot be undone.')) return;
+  MOD_QUESTIONS = JSON.parse(JSON.stringify(MOD_QUESTIONS_DEFAULT));
+  FINAL_CHECK = JSON.parse(JSON.stringify(FINAL_CHECK_DEFAULT));
+  try{ localStorage.removeItem(CURRICULUM_STORE_KEY); }catch(e){}
+  toast('Curriculum reset to defaults.');
+  renderView();
+}
+function escapeAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function curriculumArrFor(scope){ return scope==='final' ? FINAL_CHECK : MOD_QUESTIONS[scope.split(':')[1]]; }
+function editQuestionText(scope, idx, value){ curriculumArrFor(scope)[idx].q = value; saveCurriculumOverrides(); }
+function editCorrectAnswer(scope, idx, oi){ curriculumArrFor(scope)[idx].a = oi; saveCurriculumOverrides(); renderView(); }
+function editOptionText(scope, idx, oi, value){ curriculumArrFor(scope)[idx].opts[oi] = value; saveCurriculumOverrides(); }
+let curriculumEditOpen = {};
+function toggleCurriculumEdit(key){ curriculumEditOpen[key] = !curriculumEditOpen[key]; renderView(); }
+function renderEditableQuestion(scope, idx, q){
+  return `<div class="card" style="margin-bottom:12px;">
+    <label class="field-label">Question ${idx+1}</label>
+    <input class="field-input" style="margin-bottom:10px;" value="${escapeAttr(q.q)}" onchange="editQuestionText('${scope}',${idx},this.value)">
+    ${q.opts.map((o,oi)=>`<div style="display:flex;align-items:center;gap:9px;margin-bottom:8px;">
+      <input type="radio" name="correct_${scope.replace(':','_')}_${idx}" title="Mark as correct answer" ${oi===q.a?'checked':''} onchange="editCorrectAnswer('${scope}',${idx},${oi})">
+      <input class="field-input" style="flex:1;" value="${escapeAttr(o)}" onchange="editOptionText('${scope}',${idx},${oi},this.value)">
+    </div>`).join('')}
+    <div class="field-label" style="text-transform:none;font-weight:400;letter-spacing:0;color:var(--text3);">Radio button marks the correct answer.</div>
+  </div>`;
+}
+const CONTACTS = [{"need": "Anything about Twilight: process, scheduling, sessions", "name": "Ritu Gupta", "role": "Sr. Program Manager", "email": "ritunarendrakumar.g@centific.com"}, {"need": "On-the-ground quality and operations", "name": "Sander Denecker", "role": "Program Manager", "email": "sander.denecker@centific.com"}, {"need": "Tooling: Ring, Lakitu, the task app", "name": "Brian Leong", "role": "Technical Project Coordinator", "email": "brian.leong@centific.com"}, {"need": "Day-to-day coordination and general queries", "name": "Annie Tran", "role": "Project Coordinator", "email": "thaingan.tran@centific.com"}, {"need": "Night-shift support while you are working", "name": "Sree Avula", "role": "Project Coordinator", "email": "sree.avula@centific.com"}, {"need": "Onboarding: this app, your progress, certification", "name": "Ingrid Lindstrom", "role": "Training & Development", "email": "ingrid.lindstrom@centific.com"}, {"need": "Anything general, or you are not sure who to ask", "name": "The project team", "role": "—", "email": "ben_prod_twilight@centific.com"}];
+const ESCALATION = [{"tier": "Handle it yourself", "what": "Routine session flow, everything the scripts cover, normal setup problems you can resolve."}, {"tier": "Flag in real time", "what": "A neighbor confrontation, police arriving, an unworkable environment, a participant who appears intoxicated, inappropriate conduct toward you, a participant in visible distress."}, {"tier": "Report afterward", "what": "A canceled or cut-short session, a withdrawal request, any complaint from a participant or a neighbor, equipment damage. Same night."}, {"tier": "Escalate immediately", "what": "Police contact of any kind, a lost or corrupted capture, a demand touching the consent form you cannot answer, an allegation of misconduct, harm or threat of harm. Notify Ritu and Sander directly."}];
+const FIELD_CHECKLIST = [{"id": "before", "ic": "&#128203;", "t": "Before You Leave", "sub": "Kit check and confirmation, before you're on the road", "items": ["Confirm you're carrying your Centific ID badge and branded shirt", "Confirm tonight's assignment and address in the task app — not from memory or a text", "Kit inventory check against what you're issued (see the Device Handling and Hardware Setup module once published)", "Send the pre-session confirmation message to the participant"]}, {"id": "arrival", "ic": "&#128682;", "t": "Arrival & The Doorstep", "sub": "From pulling up to being let in", "items": ["Send the ETA update while en route, 20–30 min out, via the approved channel", "Arrive within the window you gave — badge and shirt visible before you knock", "Introduce yourself by first name, “from Centific,” never “for Centific”", "Confirm you're at the right address and speaking to the booked participant before unloading anything", "Ask who else is home, whether anyone is expected, and whether pets have yard access"]}, {"id": "setup", "ic": "&#9881;", "t": "Setup & Calibration", "sub": "Placing the kit and the one step worth stopping to redo", "items": ["Ask before going inside — every time, even if you were just in", "Inside: go straight to the modem and back — no wandering, nothing photographed indoors", "Set up all three fields of view: backyard, driveway, front yard", "Run the calibration capture — if it looks even slightly off, redo it before continuing"]}, {"id": "captures", "ic": "&#127909;", "t": "Running the Captures", "sub": "Briefing the participant through each scenario", "items": ["Walk the participant through the shape of the evening before anything is switched on", "Brief each scenario before it starts — you are directing, not performing it for them", "Redo any take that isn't usable — normal, never a comment on the participant", "If someone not on the consent form enters frame, pause and ask them to step clear, then redo"]}, {"id": "packdown", "ic": "&#128230;", "t": "Pack-Down & Departure", "sub": "What every participant should know before you leave", "items": ["Confirm captures were completed and submitted successfully", "Tell them when and how they'll be paid, and who to contact afterward (not you)", "Confirm they understand they won't receive or review the footage", "Thank them explicitly", "Notify your PC of any neighbor interaction, even a friendly one, before you sign off for the night"]}];
+const FIELD_SCRIPTS = [{"cat": "Participant Communication", "items": [{"t": "A nervous or hesitant participant", "s": "“You're in exactly the right place — and honestly, most people feel a bit odd about this bit. I'll talk you through everything before anything gets switched on, and you can stop me at any point.”"}, {"t": "“Who is this for?”", "s": "“Fair question, and I'm not able to name the company. How the footage gets used is set out in the consent form you signed. For more, email DC_Project_US@centific.com.”"}, {"t": "A participant wants to stop", "s": "“Absolutely. You can stop at any time and that's completely okay. No explanation needed.”"}, {"t": "Someone walks into frame", "s": "“Sorry — could I ask everyone else to stay clear of the driveway for the next few minutes? Only [participant] can be in these.”"}, {"t": "“Can I see the footage?”", "s": "“I'm not able to play anything back — it goes straight into a secure workflow. DC_Project_US@centific.com can answer anything beyond the consent form.”"}]}, {"cat": "Safety", "items": [{"t": "A neighbor approaches", "s": "“Hi — I'm here from Centific. We're running an authorized data collection session at this address with the homeowner's consent. Here's the documentation. We expect to be finished by around [time].”"}, {"t": "Police arrive", "s": "“I work with Centific. We're conducting an authorized data collection session at this address with the homeowner's written consent. I have my ID and the consent documentation here.” Then comply with any instruction and notify Ritu and Sander immediately."}, {"t": "A participant appears intoxicated", "s": "“We're not going to be able to continue tonight. I'm going to pack up here. Take care.” No explanation, no debate. Escalate once you're off the property."}, {"t": "Inappropriate conduct toward you", "s": "“I'm here in a professional capacity, so let's keep the focus on the session.” If it continues: “I need this to stay professional. If that's not workable, I'm going to pack up and go.” Then do it."}]}];
+const TROUBLESHOOT_TREE = [{"q": "Camera will not power or connect", "a": "Content pending — rework of the Orbit troubleshooting doc, once the Twilight SharePoint is live."}, {"q": "Wi-Fi / network problems in the home", "a": "Content pending — same source as above."}, {"q": "App-side faults (Ring or Lakitu)", "a": "See the Ring and Lakitu module once published."}, {"q": "When to stop troubleshooting", "a": "You are not expected to repair client hardware. Work the tree, and if it's not resolved at the end of it, escalate — that's not a failure. A delayed session costs less than a bad one: if the equipment won't get to a passing state, stop, notify Sree or Brian, and let the session be rebooked."}];
+
+// VALID_IDS guards against the 178%-progress bug: only these IDs (plus the
+// 'final_check' pseudo-id) ever count toward doneIds / certification.
+const VALID_IDS = new Set(MODULES.map(m => m.id));
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let ROLE = null, VIEW = 'path';
+let ME = null;            // {email, name, role, loc, doneIds:Set, stubDone:Set, finalScore, certified}
+let CUR_MOD = null;       // index into MODULES when VIEW === 'module'
+let DIR = [];
+let COHORT = [];
+let quizIdx = {};         // per moduleId: current question index while taking a quiz
+let quizAnswers = {};     // per moduleId: {qIdx: chosenOptionIndex}
+let stubChecked = {};     // per moduleId: bool, for stub-gated modules
+let checklistOpen = {};   // Field Reference accordion open state
+let finalMode = 'idle';   // 'idle' | 'inprogress' | 'result'
+let finalIdx = 0, finalAnswers = {}, finalResult = null;
+let adminModal = null;    // email of moderator whose detail modal is open
+let adminFilter = 'all';
+
+// ── LOCAL PERSISTENCE (per-email; UI-state convenience cache only) ──────────
+function sessionKeyFor(email){ return 'twilight_v1_session_' + email.toLowerCase(); }
+function persistLocal(){
+  if(!ME) return;
+  try{
+    localStorage.setItem(sessionKeyFor(ME.email), JSON.stringify({
+      quizAnswers, stubChecked, checklistOpen, theme: document.documentElement.getAttribute('data-theme')
+    }));
+  }catch(e){}
+}
+function restoreLocalSession(email){
+  try{
+    const raw = localStorage.getItem(sessionKeyFor(email));
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    quizAnswers = d.quizAnswers || {};
+    stubChecked = d.stubChecked || {};
+    checklistOpen = d.checklistOpen || {};
+    if(d.theme) document.documentElement.setAttribute('data-theme', d.theme);
+  }catch(e){}
+}
+const LAST_LOGIN_KEY = 'twilight_last_login';
+function setLastLogin(email){ try{ localStorage.setItem(LAST_LOGIN_KEY, email); }catch(e){} }
+function getLastLogin(){ try{ return localStorage.getItem(LAST_LOGIN_KEY); }catch(e){ return null; } }
+
+// ── BACKEND HELPERS (GET plain, POST text/plain — see PA setup guide) ───────
+async function apiGet(url){
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('GET '+r.status);
+  const t = await r.text();
+  let d; try{ d = JSON.parse(t); }catch(e){ return []; }
+  return Array.isArray(d) ? d : (d.value || []);
+}
+function normDirRow(u){
+  const pick = (keys)=>{ for(const k of keys){ if(u[k]!==undefined && u[k]!==null && String(u[k]).trim()!=='') return u[k]; } return ''; };
+  return {
+    email: String(pick(['email','Email','EMAIL'])).trim().toLowerCase(),
+    name: pick(['name','Name','NAME']),
+    role: (pick(['role','Role','ROLE'])||'moderator').toString().toLowerCase(),
+    loc: pick(['locale','Locale','LOCALE']),
+    active: (pick(['active','Active','ACTIVE'])||'yes').toString().toLowerCase()
+  };
+}
+let DATA_READY = false, _loadPromise = null;
+function loadData(){
+  if(_loadPromise) return _loadPromise;
+  _loadPromise = (async () => {
+    if(LIVE){
+      try{
+        const res = await Promise.all([apiGet(BACKEND.getDirectory), apiGet(BACKEND.getProgress)]);
+        DIR = res[0].map(normDirRow).filter(r => r.active !== 'no');
+        window._PROGRESS = res[1];
+      }catch(e){
+        console.error('[Twilight] backend load failed — using demo data:', e);
+        DIR = DEMO_DIRECTORY; window._PROGRESS = null;
+      }
+    } else {
+      DIR = DEMO_DIRECTORY; window._PROGRESS = null;
+    }
+    COHORT = DIR.filter(r=>r.role==='moderator').map(r => buildCohortRow(r));
+    DATA_READY = true;
+  })();
+  return _loadPromise;
+}
+async function saveProgress(moduleId, status, score){
+  if(!LIVE || !/^https?:\/\//.test(BACKEND.saveProgress)) return;
+  try{
+    const res = await fetch(BACKEND.saveProgress, {method:'POST', headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({email: ME.email, moduleId, status, score: (score==null?'':score)})});
+    // Fire-and-forget by design (a failed save just means the moderator
+    // re-does that checkbox next load) -- but DO log the HTTP status, since
+    // fetch() only rejects on a network-level failure, never on a PA flow
+    // returning 400/401/etc. Without this, a misconfigured flow (wrong
+    // table binding, wiped Advanced Parameters after a Save-As clone) fails
+    // 100% silently -- the UI still shows progress because doneIds is
+    // updated in-memory regardless of whether the write actually landed.
+    if(!res.ok){
+      console.warn('[Twilight] saveProgress returned', res.status, '-- check the SaveProgress flow (Table binding / Advanced Parameters / trigger set to Anyone). Progress is NOT confirmed saved to Excel.', {moduleId, status, score});
+    } else {
+      console.log('[Twilight] saveProgress OK for', moduleId);
+    }
+  }catch(e){ console.error('[Twilight] saveProgress network failure (CORS, DNS, or offline) for', moduleId, ':', e); }
+}
+function progressFor(email){
+  if(LIVE && window._PROGRESS){
+    const rows = window._PROGRESS.filter(r => String(r.Email||r.email||'').toLowerCase() === email.toLowerCase());
+    const doneIds = new Set(rows.filter(r => String(r.Status||r.status||'')==='done' && VALID_IDS.has(r.ModuleID||r.moduleId)).map(r=>r.ModuleID||r.moduleId));
+    const finalRow = rows.find(r => (r.ModuleID||r.moduleId) === 'final_check');
+    const finalScore = finalRow ? Number(finalRow.Score||finalRow.score||0) : null;
+    return {doneIds, finalScore};
+  }
+  // demo mode: derive a plausible in-progress state for the test moderator
+  if(email === 'test.mod@centific.com'){
+    return {doneIds: new Set(['welcome','centific']), finalScore: null};
+  }
+  return {doneIds: new Set(), finalScore: null};
+}
+function buildCohortRow(r){
+  const p = progressFor(r.email);
+  const totalReal = MODULES.length;
+  const certified = p.doneIds.size >= totalReal && p.finalScore !== null && p.finalScore >= FINAL_CHECK_PASS_PCT;
+  let status = 'not_started';
+  if(p.doneIds.size > 0) status = 'in_progress';
+  if(p.doneIds.size >= totalReal && (p.finalScore === null || p.finalScore < FINAL_CHECK_PASS_PCT)) status = 'awaiting_final';
+  if(certified) status = 'certified';
+  return {email:r.email, name:r.name, loc:r.loc, done:p.doneIds.size, finalScore:p.finalScore, status, certified};
+}
+
+// ── GATING ───────────────────────────────────────────────────────────────────
+function isModuleDone(id){ return ME.doneIds.has(id); }
+function moduleUnlocked(i){ return i===0 || isModuleDone(MODULES[i-1].id); }
+function allModulesDone(){ return MODULES.every(m => isModuleDone(m.id)); }
+function isCertified(){ return allModulesDone() && ME.finalScore !== null && ME.finalScore >= FINAL_CHECK_PASS_PCT; }
+
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+function findUser(email){ return DIR.find(r => r.email === email.toLowerCase()); }
+function applyProfile(rec){
+  const p = progressFor(rec.email);
+  ME = { email: rec.email, name: rec.name, role: rec.role, loc: rec.loc,
+         doneIds: p.doneIds, finalScore: p.finalScore };
+}
+async function doLogin(){
+  const el = document.getElementById('emailField');
+  const email = (el.value||'').trim().toLowerCase();
+  const err = document.getElementById('lgErr');
+  if(!/^[^@\s]+@centific\.com$/.test(email)){ err.textContent = 'Please enter your @centific.com email address.'; return; }
+  if(!DATA_READY){ err.textContent = 'Signing in…'; await loadData(); }
+  const rec = findUser(email);
+  if(!rec){ err.textContent = "That email isn't on the moderator list yet — check with your Project Manager."; return; }
+  err.textContent = '';
+  applyProfile(rec);
+  restoreLocalSession(email);
+  setLastLogin(email);
+  startApp(rec.role);
+}
+function logout(){
+  document.body.innerHTML = '';
+  ME = null; ROLE = null;
+  try{ localStorage.removeItem(LAST_LOGIN_KEY); }catch(e){}
+  renderLogin();
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', cur==='dark' ? 'light' : 'dark');
+  persistLocal();
+}
+function toast(m){
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = m; t.classList.add('show');
+  clearTimeout(window._tt); window._tt = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ── APP SHELL ────────────────────────────────────────────────────────────────
+function startApp(role){
+  ROLE = role; VIEW = (role==='admin') ? 'dash' : 'path';
+  document.body.innerHTML = `
+    <div class="shell" id="shell">
+      <div class="page-wrap">
+        <div class="app-header">
+          <div class="nav-left"><div class="nav-logo">T</div><div class="nav-brand">Project Twilight <span>&middot; Onboarding</span></div></div>
+          <div class="nav-right">
+            <div class="who"><div class="who-text"><span id="userName"></span><br><span class="role-line" id="userMeta"></span></div></div>
+            <button class="icon-btn" onclick="toggleTheme()" title="Theme">&#9680;</button>
+            <button class="btn-signout" onclick="logout()"><span aria-hidden="true">&#9099;</span>Sign out</button>
+          </div>
+        </div>
+        <div class="nav-tabs" id="navTabs"></div>
+        <main class="content" id="content"></main>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  `;
+  document.getElementById('userName').textContent = ME ? ME.name : 'Admin';
+  document.getElementById('userMeta').textContent = ROLE==='admin' ? 'Admin' : 'Moderator' + (ME.loc ? ' \u00b7 '+ME.loc : '');
+  renderNavTabs();
+  renderView();
+}
+function renderNavTabs(){
+  const tabs = ROLE==='admin'
+    ? [['dash','Cohort Dashboard'],['curriculum','Curriculum']]
+    : [['path','Learning Path'],['field','Field Reference'],['resources','Resources']];
+  document.getElementById('navTabs').innerHTML = tabs.map(([id,label]) =>
+    `<button class="nav-tab${VIEW===id?' active':''}" onclick="switchView('${id}')">${label}</button>`).join('');
+}
+function switchView(v){ VIEW = v; renderNavTabs(); renderView(); window.scrollTo(0,0); }
+function renderView(){
+  const c = document.getElementById('content');
+  const f = {path:vPath, field:vField, resources:vResources, module:vModule, dash:vDash, curriculum:vCurriculum}[VIEW];
+  c.innerHTML = f ? f() : '';
+}
+
+// ── LOGIN SCREEN ─────────────────────────────────────────────────────────────
+function renderLogin(){
+  document.body.innerHTML = `
+  <div id="login">
+    <div class="entry-card">
+      <div class="brand-mark">T</div>
+      <div class="eyebrow">CENTIFIC &middot; PROJECT TWILIGHT</div>
+      <div class="entry-title">Moderator Onboarding</div>
+      <div class="entry-sub">Nighttime video data capture.</div>
+      <label class="field-label">Centific email</label>
+      <input class="field-input" id="emailField" type="email" placeholder="v-name@centific.com" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="err-msg" id="lgErr"></div>
+      <button class="btn btn-primary" style="margin-top:6px" onclick="doLogin()">Continue &rarr;</button>
+      <div class="hint-line">We'll take you straight to your learning path.</div>
+      <div class="version-tag">v0.2.1.083126</div>
+    </div>
+  </div>`;
+}
+
+// ── LEARNING PATH ────────────────────────────────────────────────────────────
+function vPath(){
+  const doneCount = MODULES.filter(m=>isModuleDone(m.id)).length;
+  const total = MODULES.length;
+  const pct = Math.round((doneCount/total)*100);
+  const certified = isCertified();
+  const allDoneNoFinal = allModulesDone() && !certified;
+  let hero;
+  if(certified){
+    hero = `<div class="hero-box certified"><div class="pill pill-green" style="margin-bottom:10px;">&#10003; Cleared for on-site training</div>
+      <div class="hero-title2">You're certified, ${ME.name.split(' ')[0]}.</div>
+      <div class="hero-sub2">All ${MODULES.length} modules complete and the final check passed at ${ME.finalScore}%. Your Project Manager will confirm your on-site training date.</div></div>`;
+  } else if(allDoneNoFinal){
+    hero = `<div class="hero-box"><div class="hero-title2">One step left, ${ME.name.split(' ')[0]}.</div>
+      <div class="hero-sub2">All ${MODULES.length} modules are complete. Pass the final check (${FINAL_CHECK_PASS_PCT}%, unlimited retakes) to be cleared for on-site training.</div>
+      <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+      <div class="progress-label">${doneCount} of ${total} modules complete</div>
+      <button class="btn btn-primary" style="width:auto;margin-top:14px;" onclick="openFinalCheck()">Take the final check &rarr;</button></div>`;
+  } else if(doneCount===0){
+    hero = `<div class="hero-box"><div class="hero-title2">Welcome — let's get you ready.</div>
+      <div class="hero-sub2">${MODULES.length} modules, gated in order, ~${TOTAL_MIN} min total. Every module has a Back button and stays open for revisiting once you've completed it.</div>
+      <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+      <div class="progress-label">0 of ${total} modules complete</div></div>`;
+  } else {
+    hero = `<div class="hero-box"><div class="hero-title2">Welcome back, ${ME.name.split(' ')[0]}.</div>
+      <div class="hero-sub2">Pick up where you left off.</div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="progress-label">${doneCount} of ${total} modules complete</div></div>`;
+  }
+  const steps = MODULES.map((m,i) => {
+    const done = isModuleDone(m.id);
+    const unlocked = moduleUnlocked(i);
+    const current = unlocked && !done;
+    const dotClass = done ? 'done' : (current ? 'current' : 'locked');
+    const dotContent = done ? '&#10003;' : (i+1);
+    const clickable = unlocked;
+    return `<div class="step-row${clickable?' clickable':''}" ${clickable?`onclick="openModule(${i})"`:''}>
+      <div class="step-dot ${dotClass}">${dotContent}</div>
+      <div class="step-body">
+        <div class="step-title${unlocked?'':' locked'}">${m.ic} ${m.title}${m.gate==='stub'?' <span class=\"pill pill-amber\" style=\"margin-left:6px;\">Partial</span>':''}</div>
+        <div class="step-meta">${unlocked ? ('~'+m.min+' min &middot; '+(done?'Completed':'Not started')) : 'Locked — complete the previous module'}</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<h1 class="page-h1">My Learning Path</h1><p class="page-sub">${doneCount} of ${total} complete &middot; ~${TOTAL_MIN} min total</p>
+  ${hero}<div class="card"><div class="stepper">${steps}</div></div>`;
+}
+
+function openModule(i){ CUR_MOD = i; VIEW = 'module'; renderNavTabs(); renderView(); window.scrollTo(0,0); }
+function backToPath(){ VIEW='path'; renderNavTabs(); renderView(); window.scrollTo(0,0); }
+function continueFromModule(){
+  if(CUR_MOD < MODULES.length-1){ openModule(CUR_MOD+1); }
+  else { backToPath(); }
+}
+
+// ── MODULE VIEWER ────────────────────────────────────────────────────────────
+function vModule(){
+  const m = MODULES[CUR_MOD];
+  const done = isModuleDone(m.id);
+  const isLast = CUR_MOD === MODULES.length-1;
+  let gate;
+  if(m.gate === 'none'){
+    gate = renderNoneGate(m, done);
+  } else if(m.gate === 'stub'){
+    gate = renderStubGate(m, done);
+  } else {
+    gate = renderQuiz(m, done);
+  }
+  return `<div class="module-page">
+    <div class="r-eyebrow">Module ${CUR_MOD+1} of ${MODULES.length}</div>
+    <div class="r-title">${m.ic} ${m.title}</div>
+    <div class="r-sub">${m.sub}</div>
+    <div class="r-meta">~${m.min} min${m.gate==='stub'?' &middot; content still being finalized — see amber notes below':''}</div>
+    <div class="reader">${m.body}</div>
+    ${gate}
+    <div class="mod-nav-row">
+      <button class="btn btn-ghost" onclick="backToPath()">&larr; Back to path</button>
+      ${done ? `<button class="btn btn-secondary" onclick="continueFromModule()">${isLast ? 'Back to path' : 'Continue to next module'} &rarr;</button>` : ''}
+    </div>
+  </div>`;
+}
+
+// -- 'none' gate: real, finished content with no comprehension check by
+// design (e.g. the Welcome module) -- just an explicit "mark complete" step
+// so it still participates in gating/progress like every other module.
+function renderNoneGate(m, done){
+  if(done){
+    return `<div class="stub-gate"><div class="pill pill-green">&#10003; Completed</div></div>`;
+  }
+  return `<div class="stub-gate">
+    <button class="btn btn-primary" style="width:auto;" onclick="completeNone('${m.id}')">Continue &rarr;</button>
+  </div>`;
+}
+function completeNone(id){
+  ME.doneIds.add(id);
+  saveProgress(id, 'done', ''); // fire-and-forget -- don't block the UI on a slow PA response
+  renderView();
+}
+
+// -- stub gate (blocked modules): single acknowledgement checkbox --
+function renderStubGate(m, done){
+  if(done){
+    return `<div class="stub-gate"><div class="pill pill-green">&#10003; Reviewed</div></div>`;
+  }
+  const checked = !!stubChecked[m.id];
+  return `<div class="stub-gate">
+    <div class="locked-note" style="margin-top:0;margin-bottom:14px;">&#9432; This module's full content is still being finalized (see the amber notes above). This is a placeholder gate — it will be replaced with a real knowledge check once the content lands, without resetting your progress.</div>
+    <label class="stub-check" onclick="event.preventDefault();toggleStub('${m.id}')">
+      <div class="stub-box${checked?' on':''}"></div>
+      <div class="stub-label">I've reviewed this section.</div>
+    </label>
+    <button class="btn btn-primary" style="width:auto;margin-top:14px;" ${checked?'':'disabled'} onclick="completeStub('${m.id}')">Mark complete &amp; continue &rarr;</button>
+  </div>`;
+}
+function toggleStub(id){ stubChecked[id] = !stubChecked[id]; persistLocal(); renderView(); }
+function completeStub(id){
+  if(!stubChecked[id]) return;
+  ME.doneIds.add(id);
+  saveProgress(id, 'done', ''); // fire-and-forget
+  toast('Section marked complete.');
+  renderView();
+}
+
+// -- real per-module quiz (one question at a time, flagged not blocking).
+// Same single-question view whether or not the module is already done --
+// once done, options just stop being clickable and the Finish button is
+// replaced with a "Completed" pill. Back/dot-jump navigation always works,
+// so reviewing past answers never expands into a big list -- matches the
+// Maple pattern this was modeled on.
+function renderQuiz(m, done){
+  const qs = getModQuestions(m.id);
+  if(qs.length === 0){
+    // safety net: a real module with no quiz defined yet behaves like a stub
+    return renderStubGate(m, done);
+  }
+  if(!quizIdx[m.id]) quizIdx[m.id] = 0;
+  if(!quizAnswers[m.id]) quizAnswers[m.id] = {};
+  const idx = quizIdx[m.id];
+  const q = qs[idx];
+  const picked = quizAnswers[m.id][idx];
+  const answered = picked !== undefined;
+  const allAnswered = qs.every((_,i)=> quizAnswers[m.id][i] !== undefined);
+  const dots = qs.map((_,i)=>{
+    const ans = quizAnswers[m.id][i] !== undefined;
+    return `<div class="quiz-dot${i===idx?' active':''}${ans?' answered':''}"${ans?` onclick="jumpQuizQ('${m.id}',${i})" style="cursor:pointer;"`:''}></div>`;
+  }).join('');
+  const opts = q.opts.map((o,oi)=>{
+    let cls = 'quiz-opt';
+    if(answered){
+      if(oi===q.a) cls += ' correct';
+      else if(oi===picked) cls += ' incorrect';
+    }
+    // Once the module is done, answers are committed -- render as plain,
+    // non-interactive divs instead of buttons so reviewing never changes
+    // what was actually submitted.
+    return done
+      ? `<div class="${cls}" style="cursor:default;">${o}</div>`
+      : `<button class="${cls}" onclick="answerQuiz('${m.id}',${idx},${oi})">${o}</button>`;
+  }).join('');
+  const fbClass = answered ? (picked===q.a ? ' correct' : ' incorrect') : '';
+  const fb = answered ? `<div class="quiz-fb${fbClass}">${picked===q.a ? '&#10003; Correct.' : '&#10007; Not quite — the highlighted option is correct.'}</div>` : (done ? `<div class="quiz-fb">Answer not available to review on this device.</div>` : '');
+  const backBtn = idx > 0 ? `<button class="btn btn-ghost" style="width:auto;margin-top:14px;margin-right:8px;" onclick="prevQuizQ('${m.id}')">&larr; Back</button>` : '';
+  let nav;
+  if(done){
+    nav = idx < qs.length-1
+      ? `<button class="btn btn-secondary" style="width:auto;margin-top:14px;" onclick="nextQuizQ('${m.id}',${qs.length})">Next question &rarr;</button>`
+      : '';
+  } else {
+    nav = idx < qs.length-1
+      ? `<button class="btn btn-secondary" style="width:auto;margin-top:14px;" ${answered?'':'disabled'} onclick="nextQuizQ('${m.id}',${qs.length})">Next question &rarr;</button>`
+      : `<button class="btn btn-primary" style="width:auto;margin-top:14px;" ${allAnswered?'':'disabled'} onclick="completeQuiz('${m.id}')">Finish module &rarr;</button>`;
+  }
+  const progressLine = done
+    ? `<div class="quiz-progress">Knowledge check &middot; question ${idx+1} of ${qs.length} &middot; <span style="color:var(--green-text);font-weight:600;">&#10003; Completed</span></div>`
+    : `<div class="quiz-progress">Knowledge check &middot; question ${idx+1} of ${qs.length}</div>`;
+  return `<div class="quiz-card">
+    ${progressLine}
+    <div class="quiz-dots">${dots}</div>
+    <div class="quiz-q">${q.q}</div>
+    ${opts}${fb}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">${backBtn}${nav}</div>
+  </div>`;
+}
+function answerQuiz(id, qi, oi){ quizAnswers[id][qi] = oi; persistLocal(); renderView(); }
+function nextQuizQ(id, total){ quizIdx[id] = Math.min(total-1, (quizIdx[id]||0)+1); renderView(); }
+function prevQuizQ(id){ quizIdx[id] = Math.max(0, (quizIdx[id]||0)-1); renderView(); }
+function jumpQuizQ(id, i){ if(quizAnswers[id] && quizAnswers[id][i] !== undefined){ quizIdx[id] = i; renderView(); } }
+function completeQuiz(id){
+  ME.doneIds.add(id);
+  saveProgress(id, 'done', ''); // fire-and-forget
+  toast('Module complete.');
+  renderView();
+}
+
+// ── FINAL CHECK (score-gated certification exam) ────────────────────────────
+function openFinalCheck(){ finalMode='inprogress'; finalIdx=0; finalAnswers={}; finalResult=null; VIEW='final'; renderNavTabsForFinal(); }
+function renderNavTabsForFinal(){
+  document.getElementById('content').innerHTML = vFinal();
+  window.scrollTo(0,0);
+}
+function vFinal(){
+  if(finalMode==='result'){
+    const pass = finalResult.pct >= FINAL_CHECK_PASS_PCT;
+    return `<div class="module-page">
+      <div class="r-eyebrow">Final Check</div>
+      <div class="r-title">${pass ? 'Passed' : 'Not yet'} &middot; ${finalResult.pct}%</div>
+      <div class="r-sub">${finalResult.correct} of ${finalResult.total} correct &middot; ${FINAL_CHECK_PASS_PCT}% needed to pass</div>
+      ${pass ? `<div class="callout"><div class="c-ic">&#9733;</div><div class="c-tx">You're cleared for on-site training. Your Project Manager will confirm the date.</div></div>`
+             : `<div class="callout warn"><div class="c-ic">&#9888;</div><div class="c-tx">No limit on retakes — review the modules above and try again whenever you're ready.</div></div>`}
+      <button class="btn btn-secondary" style="width:auto;margin-top:14px;" onclick="backToPath()">Back to Learning Path</button>
+      ${pass?'':'<button class="btn btn-primary" style="width:auto;margin-top:14px;margin-left:10px;" onclick="openFinalCheck()">Retake &rarr;</button>'}
+    </div>`;
+  }
+  const q = FINAL_CHECK[finalIdx];
+  const picked = finalAnswers[finalIdx];
+  const answered = picked !== undefined;
+  const dots = FINAL_CHECK.map((_,i)=>{
+    const ans = finalAnswers[i] !== undefined;
+    return `<div class="quiz-dot${i===finalIdx?' active':''}${ans?' answered':''}"${ans?` onclick="jumpFinal(${i})" style="cursor:pointer;"`:''}></div>`;
+  }).join('');
+  const opts = q.opts.map((o,oi)=>{
+    let cls='quiz-opt';
+    if(answered){ if(oi===q.a) cls+=' correct'; else if(oi===picked) cls+=' incorrect'; }
+    return `<button class="${cls}" onclick="answerFinal(${oi})">${o}</button>`;
+  }).join('');
+  const fbClass2 = answered ? (picked===q.a ? ' correct' : ' incorrect') : '';
+  const fb = answered ? `<div class="quiz-fb${fbClass2}">${picked===q.a?'&#10003; Correct.':'&#10007; Not quite — the highlighted option is correct.'}</div>` : '';
+  const backBtn2 = finalIdx > 0 ? `<button class="btn btn-ghost" style="width:auto;margin-top:14px;margin-right:8px;" onclick="prevFinal()">&larr; Back</button>` : '';
+  const nav = finalIdx < FINAL_CHECK.length-1
+    ? `<button class="btn btn-secondary" style="width:auto;margin-top:14px;" ${answered?'':'disabled'} onclick="nextFinal()">Next &rarr;</button>`
+    : `<button class="btn btn-primary" style="width:auto;margin-top:14px;" ${answered?'':'disabled'} onclick="submitFinal()">See result &rarr;</button>`;
+  return `<div class="module-page">
+    <div class="r-eyebrow">Final Check &middot; question ${finalIdx+1} of ${FINAL_CHECK.length}</div>
+    <div class="r-title" style="font-size:20px;">Scenario check</div>
+    <div class="locked-note" style="margin-bottom:18px;">&#9432; Six of ten planned questions are live today; four more are held back until their underlying policies (neighbor/police protocol, contact channel, payment terms) are finalized — they'll be added without resetting anyone's progress.</div>
+    <div class="quiz-card">
+      <div class="quiz-dots">${dots}</div>
+      <div class="quiz-q">${q.q}</div>
+      ${opts}${fb}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">${backBtn2}${nav}</div>
+    </div>
+  </div>`;
+}
+function answerFinal(oi){ finalAnswers[finalIdx]=oi; renderNavTabsForFinal(); }
+function nextFinal(){ finalIdx = Math.min(FINAL_CHECK.length-1, finalIdx+1); renderNavTabsForFinal(); }
+function prevFinal(){ finalIdx = Math.max(0, finalIdx-1); renderNavTabsForFinal(); }
+function jumpFinal(i){ if(finalAnswers[i] !== undefined){ finalIdx = i; renderNavTabsForFinal(); } }
+function submitFinal(){
+  let correct=0;
+  FINAL_CHECK.forEach((q,i)=>{ if(finalAnswers[i]===q.a) correct++; });
+  const pct = Math.round((correct/FINAL_CHECK.length)*100);
+  finalResult = {correct, total: FINAL_CHECK.length, pct};
+  ME.finalScore = pct;
+  saveProgress('final_check', 'done', pct); // fire-and-forget
+  finalMode = 'result';
+  renderNavTabsForFinal();
+}
+
+// ── FIELD REFERENCE TAB ──────────────────────────────────────────────────────
+function vField(){
+  const sections = FIELD_CHECKLIST.map(s => {
+    const open = !!checklistOpen[s.id];
+    return `<div class="checklist-section">
+      <div class="checklist-head" onclick="toggleChecklistSection('${s.id}')">
+        <div class="checklist-head-l"><span class="checklist-head-ic">${s.ic}</span><div class="checklist-head-tx"><h4>${s.t}</h4><p>${s.sub}</p></div></div>
+        <svg class="${open?'open':''}" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="checklist-body${open?' open':''}"><div class="checklist-body-inner"><div class="check-group">
+        ${s.items.map((it,ii)=>`<label class="check-item${(checklistOpen['done_'+s.id+ii])?' done':''}"><input type="checkbox" ${(checklistOpen['done_'+s.id+ii])?'checked':''} onchange="toggleFieldCheck('${s.id}',${ii})"><span>${it}</span></label>`).join('')}
+      </div></div></div>
+    </div>`;
+  }).join('');
+  const scripts = FIELD_SCRIPTS.map(g => `<h3 style="margin-top:22px;">${g.cat}</h3>${g.items.map(it=>
+    `<div class="script-card"><h4>${it.t}</h4><div class="script" style="margin:0;">${it.s}</div></div>`).join('')}`).join('');
+  const escRows = ESCALATION.map(e=>`<tr><td style="white-space:nowrap;font-weight:600;color:var(--text);">${e.tier}</td><td>${e.what}</td></tr>`).join('');
+  const contactCards = CONTACTS.map(c=>`<div class="contact-card"><div class="cn">${c.name}</div><div class="cr">${c.role} &middot; ${c.need}</div><div class="ce">${c.email}</div></div>`).join('');
+  const treeRows = TROUBLESHOOT_TREE.map(t=>`<div class="tree-node"><div class="tree-q">${t.q}</div><div class="tree-a">${t.a}</div></div>`).join('');
+  return `<h1 class="page-h1">Field Reference</h1><p class="page-sub">Keep this tab open during a live session — arrival-to-departure checklist, quick scripts, escalation tiers, and troubleshooting, all in one place.</p>
+  <div class="field-quick-grid">
+    <div class="field-quick-card" onclick="document.getElementById('fr-scripts').scrollIntoView({behavior:'smooth'})"><h4>&#128172; Quick scripts</h4><p>Jump to a script by situation</p></div>
+    <div class="field-quick-card" onclick="document.getElementById('fr-tree').scrollIntoView({behavior:'smooth'})"><h4>&#128295; Troubleshooting</h4><p>Decision tree for kit problems</p></div>
+    <div class="field-quick-card" onclick="document.getElementById('fr-esc').scrollIntoView({behavior:'smooth'})"><h4>&#9888; Escalation tiers</h4><p>What to handle vs. flag vs. escalate</p></div>
+    <div class="field-quick-card" onclick="document.getElementById('fr-contacts').scrollIntoView({behavior:'smooth'})"><h4>&#128222; Who to contact</h4><p>Names, roles, emails</p></div>
+  </div>
+  <h2 style="font-size:17px;font-weight:600;margin:0 0 12px;">On-site checklist</h2>
+  ${sections}
+  <div id="fr-scripts">${scripts}</div>
+  <h2 id="fr-tree" style="font-size:17px;font-weight:600;margin:28px 0 6px;">Troubleshooting decision tree</h2>
+  ${treeRows}
+  <h2 id="fr-esc" style="font-size:17px;font-weight:600;margin:28px 0 6px;">Escalation tiers</h2>
+  <table class="tbl"><tr><th>Tier</th><th>What it covers</th></tr>${escRows}</table>
+  <h2 id="fr-contacts" style="font-size:17px;font-weight:600;margin:28px 0 6px;">Who to contact</h2>
+  ${contactCards}
+  `;
+}
+function toggleChecklistSection(id){ checklistOpen[id] = !checklistOpen[id]; persistLocal(); renderView(); }
+function toggleFieldCheck(sid, ii){ const k='done_'+sid+ii; checklistOpen[k]=!checklistOpen[k]; persistLocal(); renderView(); }
+
+// ── RESOURCES TAB ────────────────────────────────────────────────────────────
+function vResources(){
+  const items = [
+    {ic:'&#128203;', t:'Task & Checklist App (David\u2019s tool)', d:'Your source of truth in the field — assignments, SOP, and close-out.', href:'#', pending:true},
+    {ic:'&#128241;', t:'Ring login', d:'Camera platform login.', href:'#', pending:true},
+    {ic:'&#128241;', t:'Lakitu login', d:'Session/tooling platform login.', href:'#', pending:true},
+    {ic:'&#128196;', t:'Client Guidelines (moderator-facing reduction)', d:'What must be captured, what invalidates a capture. Pending distillation session.', href:'#', pending:true},
+    {ic:'&#128295;', t:'Hardware Troubleshooting reference', d:'Full decision tree — a rework of the Orbit doc.', href:'#', pending:true},
+    {ic:'&#9993;', t:'Project inbox', d:'ben_prod_twilight@centific.com — monitored by the project team.', href:'mailto:ben_prod_twilight@centific.com', pending:false},
+  ];
+  const cards = items.map(it => `<a class="res-card" href="${it.href}" ${it.pending?`onclick="event.preventDefault();toast('Link pending \u2014 will be wired in once the resource is live.')"`:''} style="text-decoration:none;color:inherit;">
+    <div class="res-ic">${it.ic}</div>
+    <div class="res-tx"><h4>${it.t} ${it.pending?'<span class=\"pill pill-amber\" style=\"margin-left:6px;\">Pending</span>':''}</h4><p>${it.d}</p></div>
+    <div class="res-arrow">&rarr;</div>
+  </a>`).join('');
+  return `<h1 class="page-h1">Resources</h1><p class="page-sub">Documents and tools you'll use outside the training path.</p>${cards}`;
+}
+
+// ── ADMIN DASHBOARD ──────────────────────────────────────────────────────────
+function vDash(){
+  const total = COHORT.length;
+  const certified = COHORT.filter(c=>c.status==='certified').length;
+  const inProgress = COHORT.filter(c=>c.status==='in_progress').length;
+  const awaitingFinal = COHORT.filter(c=>c.status==='awaiting_final').length;
+  const filtered = COHORT.filter(c => adminFilter==='all' ? true : c.status===adminFilter);
+  const rows = filtered.map(c => {
+    const pct = Math.round((c.done/MODULES.length)*100);
+    const pillMap = {not_started:['pill-gray','Not started'], in_progress:['pill-blue','In progress'], awaiting_final:['pill-amber','Awaiting final check'], certified:['pill-green','Certified']};
+    const [pc,pt] = pillMap[c.status];
+    return `<tr>
+      <td><div class="mod-row-name"><div class="mod-avatar">${c.name.charAt(0)}</div><div><div style="font-weight:600;">${c.name}</div><div style="font-size:11.5px;color:var(--text3);">${c.email}</div></div></div></td>
+      <td>${c.done} / ${MODULES.length} (${pct}%)</td>
+      <td>${c.finalScore===null?'—':c.finalScore+'%'}</td>
+      <td><span class="pill ${pc}">${pt}</span></td>
+    </tr>`;
+  }).join('');
+  return `<h1 class="page-h1">Cohort Dashboard</h1><p class="page-sub">Twilight moderators &middot; Redmond, WA</p>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-val">${total}</div><div class="kpi-lbl">Enrolled</div></div>
+    <div class="kpi-card"><div class="kpi-val">${inProgress}</div><div class="kpi-lbl">In progress</div></div>
+    <div class="kpi-card"><div class="kpi-val">${awaitingFinal}</div><div class="kpi-lbl">Awaiting final check</div></div>
+    <div class="kpi-card"><div class="kpi-val">${certified}</div><div class="kpi-lbl">Certified</div></div>
+  </div>
+  <div class="filter-row">
+    ${[['all','All'],['in_progress','In progress'],['awaiting_final','Awaiting final'],['certified','Certified']].map(([k,l])=>
+      `<button class="filter-chip${adminFilter===k?' active':''}" onclick="setAdminFilter('${k}')">${l}</button>`).join('')}
+  </div>
+  <div class="card"><table class="admin-tbl"><tr><th>Moderator</th><th>Modules</th><th>Final check</th><th>Status</th></tr>${rows||'<tr><td colspan="4" style="color:var(--text3);">No moderators match this filter.</td></tr>'}</table></div>`;
+}
+function setAdminFilter(f){ adminFilter=f; renderView(); }
+
+function vCurriculum(){
+  const rows = MODULES.map((m,i) => {
+    const qs = getModQuestions(m.id);
+    const editable = qs.length > 0;
+    const gateLabel = m.gate==='stub' ? '<span class="pill pill-amber" style="margin-left:6px;">Partial content</span>'
+                     : (editable ? '<span class="pill pill-green" style="margin-left:6px;">Ready</span>' : '<span class="pill pill-gray" style="margin-left:6px;">No check</span>');
+    const open = !!curriculumEditOpen[m.id];
+    return `<div class="res-card" style="cursor:default;flex-direction:column;align-items:stretch;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="res-ic">${m.ic}</div>
+        <div class="res-tx" style="flex:1;"><h4>${i+1}. ${m.title} ${gateLabel}</h4><p>~${m.min} min &middot; ${qs.length} question${qs.length===1?'':'s'}</p></div>
+        ${editable ? `<button class="btn btn-ghost" onclick="toggleCurriculumEdit('${m.id}')">${open?'Hide':'Edit'} questions</button>` : ''}
+      </div>
+      ${editable && open ? `<div style="margin-top:14px;">${qs.map((q,qi)=>renderEditableQuestion('mod:'+m.id, qi, q)).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+  const finalOpen = !!curriculumEditOpen['final'];
+  return `<h1 class="page-h1">Curriculum</h1><p class="page-sub">${MODULES.length} modules, sequential and gated &middot; two-layer knowledge check (per-module + final) &middot; ~${TOTAL_MIN} min total</p>
+  <div class="callout" style="margin-bottom:18px;"><div class="c-ic">&#9432;</div><div class="c-tx"><strong>Question and answer text below is editable.</strong> Changes save to this browser only until the Curriculum backend is wired — see Dev_Notes.md. <button class="btn btn-ghost" style="margin-left:4px;" onclick="resetCurriculum()">Reset all to defaults</button></div></div>
+  ${rows}
+  <div class="res-card" style="cursor:default;flex-direction:column;align-items:stretch;margin-top:6px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="res-ic">&#127919;</div>
+      <div class="res-tx" style="flex:1;"><h4>Final Check <span class="pill pill-blue" style="margin-left:6px;">${FINAL_CHECK.length} of 10 planned</span></h4><p>${FINAL_CHECK_PASS_PCT}% to pass &middot; unlimited retakes &middot; 4 more held pending policy decisions</p></div>
+      <button class="btn btn-ghost" onclick="toggleCurriculumEdit('final')">${finalOpen?'Hide':'Edit'} questions</button>
+    </div>
+    ${finalOpen ? `<div style="margin-top:14px;">${FINAL_CHECK.map((q,qi)=>renderEditableQuestion('final', qi, q)).join('')}</div>` : ''}
+  </div>`;
+}
+
+// ── BOOT ─────────────────────────────────────────────────────────────────────
+// Local-file warning: modern Chrome/Edge block outbound fetch() from a
+// file:// origin to remote HTTPS endpoints, so BACKEND calls silently never
+// leave the browser when someone double-clicks this file instead of opening
+// it from a hosted URL. That looks identical to "the flow is broken" (zero
+// Power Automate run history) but is actually a browser restriction, not an
+// app or flow bug. Appended to <html> (a sibling of <body>), not inside
+// <body>, so it survives every full-body innerHTML re-render.
+if(location.protocol === 'file:'){
+  const w = document.createElement('div');
+  w.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#F59E0B;color:#1a1207;font-family:-apple-system,\'SF Pro Text\',sans-serif;font-size:12.5px;font-weight:600;padding:9px 16px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.25);';
+  w.textContent = '⚠ Opened as a local file (file://) — network calls to Power Automate are blocked by the browser from this origin, so progress will not sync. Open this from a hosted URL (e.g. GitHub Pages) to test the live backend.';
+  document.documentElement.appendChild(w);
+}
+
+// Prefetch starts the instant the page loads (not on a click) -- see
+// canonical pattern in Verdi_App_Family_Master_Context.md §20.1. If there's
+// no auto-resume candidate, show the login screen immediately rather than
+// waiting on the network; doLogin() awaits the same in-flight promise.
+loadCurriculumOverrides();
+if(!getLastLogin()) renderLogin();
+loadData().then(() => {
+  const last = getLastLogin();
+  if(last){
+    const rec = findUser(last);
+    if(rec){ applyProfile(rec); restoreLocalSession(last); startApp(rec.role); }
+    else { renderLogin(); }
+  }
+});
+
+</script>
+</body>
+</html>
