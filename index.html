@@ -180,7 +180,7 @@ h1.page-h1{font-size:24px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;}
 .script{background:var(--bg3);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;font-style:italic;font-size:14.5px;line-height:1.6;color:var(--text2);margin:10px 0;}
 .script-card{border:.5px solid var(--border);border-radius:14px;padding:16px 18px;margin:14px 0;background:var(--card-bg);}
 .script-card h4{font-size:14.5px;font-weight:700;margin:0 0 8px;letter-spacing:-.01em;}
-.script-card .dont{font-size:13px;color:var(--text3);margin-top:10px;line-height:1.55;}
+.script-card .dont{font-size:13px;color:var(--text2);margin-top:10px;line-height:1.55;}
 .script-card .why{font-size:13.5px;color:var(--text2);margin-top:8px;line-height:1.55;}
 .tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;}
 .tbl th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);padding:8px 10px;border-bottom:.5px solid var(--border-strong);}
@@ -238,10 +238,10 @@ h1.page-h1{font-size:24px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;}
 .contact-card .ce{font-size:12.5px;color:var(--accent-ink);}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);border-radius:14px;padding:12px 20px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:999;max-width:90vw;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.locked-note{display:flex;align-items:center;gap:10px;background:var(--bg3);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--text3);margin-top:14px;}
+.locked-note{display:flex;align-items:center;gap:10px;background:var(--bg3);border:.5px solid var(--border);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--text2);margin-top:14px;}
 .video-embed{border-radius:14px;overflow:hidden;border:.5px solid var(--border);margin:14px 0;}
 .video-embed iframe{width:100%;aspect-ratio:16/9;border:none;display:block;}
-.video-fallback{display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;background:var(--bg3);color:var(--text3);font-size:13.5px;flex-direction:column;gap:10px;}
+.video-fallback{display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;background:var(--bg3);color:var(--text2);font-size:13.5px;flex-direction:column;gap:10px;}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 @media (max-width:760px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
 .kpi-card{background:var(--card-bg);border:.5px solid var(--border);border-radius:14px;padding:16px 18px;}
@@ -273,7 +273,7 @@ h1.page-h1{font-size:24px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;}
 <script>
 
 // ── VERSION (MAJOR.MINOR.MMDDYY) ────────────────────────────────────────────
-const APP_VERSION = '0.6.3.090326';
+const APP_VERSION = '0.6.4.090326';
 
 // ── BACKEND CONFIG ───────────────────────────────────────────────────────────
 // LIVE as of this build -- these are Twilight's own GetDirectory/GetProgress/
@@ -579,7 +579,7 @@ function renderLogin(){
       <div class="err-msg" id="lgErr"></div>
       <button class="btn btn-primary" style="margin-top:6px" onclick="doLogin()">Continue &rarr;</button>
       <div class="hint-line">We'll take you straight to your learning path.</div>
-      <div class="version-tag">v0.6.3.090326</div>
+      <div class="version-tag">v0.6.4.090326</div>
     </div>
   </div>`;
 }
