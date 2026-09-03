@@ -308,6 +308,26 @@ let MOD_QUESTIONS = JSON.parse(JSON.stringify(MOD_QUESTIONS_DEFAULT));
 let FINAL_CHECK = JSON.parse(JSON.stringify(FINAL_CHECK_DEFAULT));
 function getModQuestions(id){ return MOD_QUESTIONS[id] || []; }
 
+function loadCurriculumOverrides(){
+  try{
+    const raw = localStorage.getItem('twilight_curriculum_v1');
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    if(saved.modQuestions) MOD_QUESTIONS = saved.modQuestions;
+    if(saved.finalCheck)   FINAL_CHECK   = saved.finalCheck;
+  }catch(e){}
+}
+function saveCurriculumOverrides(){
+  try{ localStorage.setItem('twilight_curriculum_v1', JSON.stringify({modQuestions: MOD_QUESTIONS, finalCheck: FINAL_CHECK})); }catch(e){}
+}
+function resetCurriculum(){
+  try{ localStorage.removeItem('twilight_curriculum_v1'); }catch(e){}
+  MOD_QUESTIONS = JSON.parse(JSON.stringify(MOD_QUESTIONS_DEFAULT));
+  FINAL_CHECK   = JSON.parse(JSON.stringify(FINAL_CHECK_DEFAULT));
+  renderView();
+}
+function curriculumArrFor(scope){ return scope==='final' ? FINAL_CHECK : (MOD_QUESTIONS[scope] || []); }
+
 // PLACEHOLDER -- Twilight needs its own Curriculum table + GetCurriculum/
 // SaveCurriculum flows for edits to reach every moderator's device. Until
 // that's wired, edits persist to THIS BROWSER ONLY via localStorage -- see
